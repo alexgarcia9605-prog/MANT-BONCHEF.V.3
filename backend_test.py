@@ -258,29 +258,36 @@ class EncargadoLineaAPITester:
 
 def main():
     """Run all tests"""
-    print("🚀 Starting Realizar Functionality API Tests")
+    print("🚀 Starting Encargado Línea Role API Tests")
     print("=" * 50)
     
-    tester = RealizarAPITester()
+    tester = EncargadoLineaAPITester()
     
-    # Run authentication test
-    if not tester.test_login():
-        print("❌ Login failed, stopping tests")
+    # Run admin authentication test
+    if not tester.test_admin_login():
+        print("❌ Admin login failed, stopping tests")
         return 1
     
-    # Get work orders to test with
-    if not tester.test_get_work_orders():
-        print("❌ Could not get work orders, stopping tests")
+    # Create encargado user
+    if not tester.test_create_encargado_user():
+        print("❌ Could not create encargado user, stopping tests")
         return 1
     
-    # Test preventive order "Realizar" functionality
-    tester.test_preventive_realizar_realizada()
+    # Test encargado login
+    if not tester.test_encargado_login():
+        print("❌ Encargado login failed, stopping tests")
+        return 1
     
-    # Test corrective order "Realizar" functionality  
-    tester.test_corrective_realizar_cierre_parcial()
+    # Get machines for testing
+    if not tester.test_get_machines():
+        print("❌ Could not get machines, stopping tests")
+        return 1
     
-    # Verify updates
-    tester.test_get_updated_orders()
+    # Test role functionality
+    tester.test_role_exists_in_users_endpoint()
+    tester.test_update_user_role_to_encargado()
+    tester.test_encargado_create_corrective_order()
+    tester.test_encargado_cannot_create_preventive_order()
     
     # Print results
     print("\n" + "=" * 50)
