@@ -156,26 +156,32 @@
     @apply bg-muted-foreground/50;
 }
 
-/* Sidebar styles */
+/* Sidebar styles - Industrial Dark Theme */
 .sidebar {
-    @apply bg-secondary text-secondary-foreground;
+    background: linear-gradient(180deg, #0a0a0b 0%, #111113 100%);
+    @apply text-white/90;
 }
 
 .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200 text-white/70 border-l-2 border-transparent;
 }
 
 .sidebar-link:hover {
-    @apply bg-white/10;
+    @apply bg-white/5 text-white border-l-primary/50;
 }
 
 .sidebar-link.active {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary/15 text-primary border-l-primary font-medium;
+    box-shadow: 0 0 20px rgba(255, 85, 0, 0.1);
 }
 
-/* Card hover effect */
+/* Card styles - Tech look */
 .card-hover {
-    @apply transition-shadow duration-200 hover:shadow-md;
+    @apply transition-all duration-200 hover:border-primary/30;
+}
+
+.card-hover:hover {
+    box-shadow: 0 0 30px rgba(255, 85, 0, 0.05);
 }
 
 /* Animations */
