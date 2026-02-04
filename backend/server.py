@@ -2367,6 +2367,232 @@ async def get_line_starts_analytics(user: dict = Depends(get_current_user)):
         "daily_trend": daily_trend
     }
 
+# ============== SPARE PARTS (ALMACÉN) ENDPOINTS ==============
+
+@api_router.get("/spare-parts", response_model=List[SparePartResponse])
+async def get_spare_parts(user: dict = Depends(get_current_user)):
+    """Obtener todos los repuestos del almacén"""
+    parts = await db.spare_parts.find({}, {"_id": 0}).sort("name", 1).to_list(500)
+    
+    # Enriquecer con nombre de máquina y estado
+    machines = {m["id"]: m["name"] async for m in db.machines.find({}, {"_id": 0, "id": 1, "name": 1})}
+    
+    result = []
+    for part in parts:
+        # Determinar estado del stock
+        if part["stock_current"] <= part["stock_min"]:
+            status = "bajo"
+        elif part["stock_current"] >= part["stock_max"]:
+            status = "alto"
+        else:
+            status = "normal"
+        
+        result.append({
+            **part,
+            "machine_name": machines.get(part.get("machine_id"), ""),
+            "status": status
+        })
+    
+    return result
+
+@api_router.post("/spare-parts", response_model=SparePartResponse)
+async def create_spare_part(part: SparePartCreate, user: dict = Depends(require_role(["admin"]))):
+    """Crear un nuevo repuesto - Solo admin"""
+    # Verificar referencia interna única
+    existing = await db.spare_parts.find_one({"internal_reference": part.internal_reference})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe un repuesto con esa referencia interna")
+    
+    part_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Obtener nombre de máquina si existe
+    machine_name = ""
+    if part.machine_id:
+        machine = await db.machines.find_one({"id": part.machine_id}, {"_id": 0, "name": 1})
+        machine_name = machine["name"] if machine else ""
+    
+    new_part = {
+        "id": part_id,
+        **part.model_dump(),
+        "created_at": now,
+        "created_by": user["id"]
+    }
+    
+    await db.spare_parts.insert_one(new_part)
+    
+    # Determinar estado
+    if part.stock_current <= part.stock_min:
+        status = "bajo"
+    elif part.stock_current >= part.stock_max:
+        status = "alto"
+    else:
+        status = "normal"
+    
+    return {**new_part, "machine_name": machine_name, "status": status}
+
+@api_router.put("/spare-parts/{part_id}", response_model=SparePartResponse)
+async def update_spare_part(part_id: str, part: SparePartCreate, user: dict = Depends(require_role(["admin"]))):
+    """Actualizar un repuesto - Solo admin"""
+    existing = await db.spare_parts.find_one({"id": part_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Repuesto no encontrado")
+    
+    # Verificar referencia interna única (si cambió)
+    if part.internal_reference != existing["internal_reference"]:
+        duplicate = await db.spare_parts.find_one({"internal_reference": part.internal_reference, "id": {"$ne": part_id}})
+        if duplicate:
+            raise HTTPException(status_code=400, detail="Ya existe un repuesto con esa referencia interna")
+    
+    # Obtener nombre de máquina
+    machine_name = ""
+    if part.machine_id:
+        machine = await db.machines.find_one({"id": part.machine_id}, {"_id": 0, "name": 1})
+        machine_name = machine["name"] if machine else ""
+    
+    await db.spare_parts.update_one({"id": part_id}, {"$set": part.model_dump()})
+    
+    updated = await db.spare_parts.find_one({"id": part_id}, {"_id": 0})
+    
+    if updated["stock_current"] <= updated["stock_min"]:
+        status = "bajo"
+    elif updated["stock_current"] >= updated["stock_max"]:
+        status = "alto"
+    else:
+        status = "normal"
+    
+    return {**updated, "machine_name": machine_name, "status": status}
+
+@api_router.delete("/spare-parts/{part_id}")
+async def delete_spare_part(part_id: str, user: dict = Depends(require_role(["admin"]))):
+    """Eliminar un repuesto - Solo admin"""
+    result = await db.spare_parts.delete_one({"id": part_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Repuesto no encontrado")
+    return {"message": "Repuesto eliminado"}
+
+@api_router.patch("/spare-parts/{part_id}/stock")
+async def update_spare_part_stock(part_id: str, quantity: int, operation: str, user: dict = Depends(require_role(["admin", "supervisor"]))):
+    """Ajustar stock de un repuesto (sumar o restar)"""
+    part = await db.spare_parts.find_one({"id": part_id}, {"_id": 0})
+    if not part:
+        raise HTTPException(status_code=404, detail="Repuesto no encontrado")
+    
+    if operation == "add":
+        new_stock = part["stock_current"] + quantity
+    elif operation == "subtract":
+        new_stock = part["stock_current"] - quantity
+        if new_stock < 0:
+            raise HTTPException(status_code=400, detail="Stock no puede ser negativo")
+    else:
+        raise HTTPException(status_code=400, detail="Operación inválida. Use 'add' o 'subtract'")
+    
+    await db.spare_parts.update_one({"id": part_id}, {"$set": {"stock_current": new_stock}})
+    return {"message": "Stock actualizado", "new_stock": new_stock}
+
+# ============== SPARE PART REQUESTS ENDPOINTS ==============
+
+@api_router.get("/spare-part-requests", response_model=List[SparePartRequestResponse])
+async def get_spare_part_requests(status: Optional[str] = None, user: dict = Depends(get_current_user)):
+    """Obtener solicitudes de repuestos"""
+    query = {}
+    if status and status != "all":
+        query["status"] = status
+    
+    # Si es técnico, solo ver sus solicitudes
+    if user["role"] == "tecnico":
+        query["requested_by"] = user["id"]
+    
+    requests = await db.spare_part_requests.find(query, {"_id": 0}).sort("requested_at", -1).to_list(500)
+    return requests
+
+@api_router.post("/spare-part-requests", response_model=SparePartRequestResponse)
+async def create_spare_part_request(request: SparePartRequestCreate, user: dict = Depends(get_current_user)):
+    """Crear una solicitud de repuesto - Todos los usuarios pueden solicitar"""
+    # Verificar que el repuesto existe
+    part = await db.spare_parts.find_one({"id": request.spare_part_id}, {"_id": 0})
+    if not part:
+        raise HTTPException(status_code=404, detail="Repuesto no encontrado")
+    
+    request_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    
+    new_request = {
+        "id": request_id,
+        "spare_part_id": request.spare_part_id,
+        "spare_part_name": part["name"],
+        "internal_reference": part["internal_reference"],
+        "quantity": request.quantity,
+        "reason": request.reason,
+        "urgency": request.urgency,
+        "status": "pendiente",
+        "requested_by": user["id"],
+        "requested_by_name": user["name"],
+        "requested_at": now,
+        "resolved_by": None,
+        "resolved_by_name": None,
+        "resolved_at": None,
+        "notes": None
+    }
+    
+    await db.spare_part_requests.insert_one(new_request)
+    return new_request
+
+@api_router.put("/spare-part-requests/{request_id}/resolve")
+async def resolve_spare_part_request(
+    request_id: str, 
+    status: str, 
+    notes: Optional[str] = None,
+    user: dict = Depends(require_role(["admin", "supervisor"]))
+):
+    """Resolver una solicitud de repuesto (aprobar/rechazar/entregar)"""
+    if status not in ["aprobada", "rechazada", "entregada"]:
+        raise HTTPException(status_code=400, detail="Estado inválido")
+    
+    request = await db.spare_part_requests.find_one({"id": request_id}, {"_id": 0})
+    if not request:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    update_data = {
+        "status": status,
+        "resolved_by": user["id"],
+        "resolved_by_name": user["name"],
+        "resolved_at": now,
+        "notes": notes
+    }
+    
+    # Si se entrega, descontar del stock
+    if status == "entregada":
+        part = await db.spare_parts.find_one({"id": request["spare_part_id"]}, {"_id": 0})
+        if part:
+            new_stock = part["stock_current"] - request["quantity"]
+            if new_stock < 0:
+                raise HTTPException(status_code=400, detail="Stock insuficiente para entregar")
+            await db.spare_parts.update_one({"id": request["spare_part_id"]}, {"$set": {"stock_current": new_stock}})
+    
+    await db.spare_part_requests.update_one({"id": request_id}, {"$set": update_data})
+    return {"message": f"Solicitud {status}"}
+
+@api_router.delete("/spare-part-requests/{request_id}")
+async def delete_spare_part_request(request_id: str, user: dict = Depends(get_current_user)):
+    """Cancelar/eliminar una solicitud - Solo el solicitante o admin"""
+    request = await db.spare_part_requests.find_one({"id": request_id}, {"_id": 0})
+    if not request:
+        raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+    
+    # Solo puede eliminar el que la creó o un admin
+    if request["requested_by"] != user["id"] and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="No tienes permiso para eliminar esta solicitud")
+    
+    # Solo se puede eliminar si está pendiente
+    if request["status"] != "pendiente" and user["role"] != "admin":
+        raise HTTPException(status_code=400, detail="Solo se pueden eliminar solicitudes pendientes")
+    
+    await db.spare_part_requests.delete_one({"id": request_id})
+    return {"message": "Solicitud eliminada"}
+
 # ============== HEALTH CHECK ==============
 
 @api_router.get("/health")
