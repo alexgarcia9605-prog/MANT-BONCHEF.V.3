@@ -473,23 +473,75 @@ export default function WorkOrderDetail() {
                                                                 </SelectContent>
                                                             </Select>
                                                         </div>
-                                                        <div className="grid grid-cols-2 gap-3">
-                                                            <div className="form-group">
-                                                                <Label>Repuesto Utilizado</Label>
-                                                                <Input
-                                                                    value={editData.spare_part_used || ''}
-                                                                    onChange={(e) => setEditData({ ...editData, spare_part_used: e.target.value })}
-                                                                    placeholder="Nombre del repuesto"
-                                                                />
+                                                        
+                                                        {/* Selector de Repuesto del Almacén */}
+                                                        <div className="p-3 border rounded-lg bg-blue-50/50 border-blue-200">
+                                                            <Label className="flex items-center gap-2 mb-2 text-blue-700">
+                                                                <Package className="w-4 h-4" />
+                                                                Repuesto del Almacén
+                                                            </Label>
+                                                            <div className="grid grid-cols-3 gap-3">
+                                                                <div className="col-span-2 form-group">
+                                                                    <Select
+                                                                        value={selectedSparePartId || "none"}
+                                                                        onValueChange={(v) => {
+                                                                            setSelectedSparePartId(v === "none" ? "" : v);
+                                                                            const part = spareParts.find(p => p.id === v);
+                                                                            if (part) {
+                                                                                setEditData({
+                                                                                    ...editData,
+                                                                                    spare_part_id: v,
+                                                                                    spare_part_used: part.name,
+                                                                                    spare_part_reference: part.internal_reference
+                                                                                });
+                                                                            } else {
+                                                                                setEditData({
+                                                                                    ...editData,
+                                                                                    spare_part_id: '',
+                                                                                    spare_part_used: '',
+                                                                                    spare_part_reference: ''
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Seleccionar repuesto" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent>
+                                                                            <SelectItem value="none">Sin repuesto</SelectItem>
+                                                                            {spareParts.map(part => (
+                                                                                <SelectItem key={part.id} value={part.id}>
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <span>{part.name}</span>
+                                                                                        <span className="text-xs text-muted-foreground">
+                                                                                            ({part.internal_reference}) - Stock: {part.stock_current}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                                <div className="form-group">
+                                                                    <Input
+                                                                        type="number"
+                                                                        min="1"
+                                                                        value={sparePartQuantity}
+                                                                        onChange={(e) => {
+                                                                            const qty = parseInt(e.target.value) || 1;
+                                                                            setSparePartQuantity(qty);
+                                                                            setEditData({ ...editData, spare_part_quantity: qty });
+                                                                        }}
+                                                                        placeholder="Cant."
+                                                                        disabled={!selectedSparePartId}
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                            <div className="form-group">
-                                                                <Label>Referencia</Label>
-                                                                <Input
-                                                                    value={editData.spare_part_reference || ''}
-                                                                    onChange={(e) => setEditData({ ...editData, spare_part_reference: e.target.value })}
-                                                                    placeholder="Referencia"
-                                                                />
-                                                            </div>
+                                                            {selectedSparePartId && (
+                                                                <p className="text-xs text-blue-600 mt-2">
+                                                                    Se descontará del almacén al marcar como realizada
+                                                                </p>
+                                                            )}
                                                         </div>
                                                     </>
                                                 )}
