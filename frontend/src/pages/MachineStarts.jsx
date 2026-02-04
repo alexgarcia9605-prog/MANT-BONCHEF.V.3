@@ -423,10 +423,10 @@ export default function MachineStarts() {
                                 </div>
                                 <Select value={deptFilter} onValueChange={setDeptFilter}>
                                     <SelectTrigger className="w-full md:w-48">
-                                        <SelectValue placeholder="Sección" />
+                                        <SelectValue placeholder="Departamento" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">Todas las secciones</SelectItem>
+                                        <SelectItem value="all">Todos los departamentos</SelectItem>
                                         {departments.map(d => (
                                             <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
                                         ))}
