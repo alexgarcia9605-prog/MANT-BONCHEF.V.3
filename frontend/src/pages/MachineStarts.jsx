@@ -41,7 +41,8 @@ import {
     Trash2,
     Loader2,
     TrendingUp,
-    BarChart3
+    BarChart3,
+    GitBranch
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -51,7 +52,7 @@ const COLORS = ['#10b981', '#ef4444', '#6b7280'];
 export default function MachineStarts() {
     const { hasRole } = useAuth();
     const [starts, setStarts] = useState([]);
-    const [machines, setMachines] = useState([]);
+    const [productionLines, setProductionLines] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -62,8 +63,7 @@ export default function MachineStarts() {
     const [deptFilter, setDeptFilter] = useState('all');
     const [activeTab, setActiveTab] = useState('list');
     const [form, setForm] = useState({
-        machine_id: '',
-        department_id: '',
+        production_line_id: '',
         target_time: '',
         actual_time: '',
         delay_reason: '',
@@ -76,14 +76,14 @@ export default function MachineStarts() {
 
     const fetchData = async () => {
         try {
-            const [startsRes, machinesRes, deptsRes, statsRes] = await Promise.all([
+            const [startsRes, linesRes, deptsRes, statsRes] = await Promise.all([
                 axios.get(`${API}/machine-starts`),
-                axios.get(`${API}/machines`),
+                axios.get(`${API}/production-lines`),
                 axios.get(`${API}/departments`),
                 axios.get(`${API}/machine-starts/compliance-stats`)
             ]);
             setStarts(startsRes.data);
-            setMachines(machinesRes.data);
+            setProductionLines(linesRes.data.filter(l => l.status === 'activa'));
             setDepartments(deptsRes.data);
             setStats(statsRes.data);
         } catch (error) {
@@ -95,8 +95,7 @@ export default function MachineStarts() {
 
     const resetForm = () => {
         setForm({
-            machine_id: '',
-            department_id: '',
+            production_line_id: '',
             target_time: '',
             actual_time: '',
             delay_reason: '',
@@ -113,8 +112,7 @@ export default function MachineStarts() {
     const openEditDialog = (start) => {
         setEditingStart(start);
         setForm({
-            machine_id: start.machine_id,
-            department_id: start.department_id,
+            production_line_id: start.production_line_id || '',
             target_time: start.target_time || '',
             actual_time: start.actual_time || '',
             delay_reason: start.delay_reason || '',
@@ -125,7 +123,7 @@ export default function MachineStarts() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.machine_id || !form.department_id || !form.target_time || !form.date) {
+        if (!form.production_line_id || !form.target_time || !form.date) {
             toast.error('Completa todos los campos requeridos');
             return;
         }
@@ -160,17 +158,31 @@ export default function MachineStarts() {
         }
     };
 
-    const handleMachineChange = (machineId) => {
-        const machine = machines.find(m => m.id === machineId);
+    const handleLineChange = (lineId) => {
+        const line = productionLines.find(l => l.id === lineId);
         setForm({
             ...form,
-            machine_id: machineId,
-            department_id: machine?.department_id || ''
+            production_line_id: lineId,
+            target_time: line?.target_start_time || ''
         });
     };
 
+    // Group lines by department for better organization
+    const getLinesByDepartment = () => {
+        const grouped = {};
+        departments.forEach(dept => {
+            grouped[dept.id] = {
+                name: dept.name,
+                lines: productionLines.filter(l => l.department_id === dept.id)
+            };
+        });
+        return grouped;
+    };
+
+    const linesByDept = getLinesByDepartment();
+
     const filteredStarts = starts.filter(s => {
-        const matchesSearch = s.machine_name?.toLowerCase().includes(search.toLowerCase());
+        const matchesSearch = s.production_line_name?.toLowerCase().includes(search.toLowerCase());
         const matchesDept = deptFilter === 'all' || s.department_id === deptFilter;
         return matchesSearch && matchesDept;
     });
