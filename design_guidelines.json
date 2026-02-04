@@ -1,0 +1,163 @@
+{
+  "identity": {
+    "name": "Bonchef Mantenimiento",
+    "persona": "E1 - The Anti-AI Designer",
+    "archetype": "The Performance Pro (Industrial Precision)",
+    "vibe": "Clinical, Robust, Tactical, High-Contrast"
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Chivo, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "heading": "font-black (900) or font-bold (700)",
+      "body": "font-normal (400) or font-medium (500)"
+    },
+    "tracking": {
+      "heading": "tracking-tight (-0.02em)",
+      "overline": "tracking-[0.2em]"
+    },
+    "scale": {
+      "h1": "text-4xl md:text-5xl lg:text-6xl",
+      "h2": "text-3xl md:text-4xl",
+      "h3": "text-2xl md:text-3xl",
+      "body": "text-base md:text-lg",
+      "small": "text-sm",
+      "tiny": "text-xs"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#F97316",
+        "foreground": "#FFFFFF",
+        "description": "Safety Orange - Used for primary actions, CTAs, and critical alerts."
+      },
+      "secondary": {
+        "DEFAULT": "#0F172A",
+        "foreground": "#F8FAFC",
+        "description": "Slate Obsidian - Used for sidebars, navigation, and strong headers."
+      },
+      "background": {
+        "light": "#F8FAFC",
+        "dark": "#020617",
+        "description": "Clinical Slate - Very pale cool grey for light mode, deep void for dark mode."
+      },
+      "surface": {
+        "light": "#FFFFFF",
+        "dark": "#0F172A",
+        "description": "Card backgrounds."
+      },
+      "status": {
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444",
+        "info": "#3B82F6",
+        "maintenance": "#6366F1"
+      }
+    },
+    "gradients": {
+      "hazard": "repeating-linear-gradient(45deg, #F59E0B, #F59E0B 10px, #FBBF24 10px, #FBBF24 20px)",
+      "subtle_glow": "radial-gradient(circle at center, rgba(249, 115, 22, 0.15) 0%, transparent 70%)"
+    }
+  },
+  "layout": {
+    "grid_system": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 md:gap-6",
+      "card_internal": "flex flex-col gap-4 p-6"
+    },
+    "spacing": {
+      "container_padding": "p-4 md:p-8 lg:p-12",
+      "section_gap": "gap-8 md:gap-12",
+      "touch_target": "min-h-[48px] (Critical for technicians on tablets)"
+    },
+    "containers": {
+      "max_width": "max-w-7xl mx-auto",
+      "sidebar_width": "w-64"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium transition-all active:scale-95 shadow-sm",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2 rounded-md font-medium",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 rounded-md",
+      "technician_mobile": "h-14 text-lg font-bold w-full shadow-md"
+    },
+    "cards": {
+      "style": "bg-card text-card-foreground rounded-lg border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200",
+      "dashboard_metric": "flex flex-col justify-between p-6 h-full relative overflow-hidden"
+    },
+    "inputs": {
+      "style": "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "badges": {
+      "style": "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      "variants": {
+        "operational": "border-transparent bg-green-500/15 text-green-700 hover:bg-green-500/25",
+        "down": "border-transparent bg-red-500/15 text-red-700 hover:bg-red-500/25",
+        "maintenance": "border-transparent bg-yellow-500/15 text-yellow-700 hover:bg-yellow-500/25"
+      }
+    }
+  },
+  "visual_enhancers": {
+    "textures": {
+      "noise": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")",
+      "grid": "bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"
+    },
+    "shadows": {
+      "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "glow": "0 0 15px rgba(249, 115, 22, 0.3)"
+    },
+    "borders": {
+      "tech": "border-l-4 border-l-primary"
+    }
+  },
+  "motion": {
+    "transitions": {
+      "default": "transition-all duration-200 ease-in-out",
+      "slow": "transition-all duration-500 ease-out"
+    },
+    "animations": {
+      "fade_in": "animate-in fade-in duration-500",
+      "slide_up": "animate-in slide-in-from-bottom-4 duration-500"
+    }
+  },
+  "image_urls": {
+    "hero_factory": "https://images.unsplash.com/photo-1717386255773-a456c611dc4e?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "technician_working": "https://images.unsplash.com/photo-1730584475795-f0be0efd606e?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "safety_gear": "https://images.unsplash.com/photo-1667344970482-e939871e9f25?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "quality_check": "https://images.unsplash.com/photo-1609558930936-ff4fcb2560b0?crop=entropy&cs=srgb&fm=jpg&q=85"
+  },
+  "instructions_to_main_agent": [
+    "Use 'Safety Orange' (#F97316) sparingly for high-priority actions only.",
+    "Ensure all 'Technician' views (mobile) have large touch targets (min 48px).",
+    "Use the 'Grid Texture' background on the Dashboard to give it a technical feel.",
+    "Implement the 'Bento Grid' layout for the main dashboard widgets.",
+    "Use 'Chivo' font for all headings to establish the industrial brand.",
+    "For status indicators, use the 'Badge' component with the specific color variants defined.",
+    "Do not use gradients for backgrounds; stick to solid colors or subtle noise textures.",
+    "Ensure high contrast for all text, especially in the 'Dark Mode' sidebar."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Create new components that match the style and conventions of existing components when needed",
+    "Examine existing components to understand the project's component patterns before creating new ones",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use sonner for toasts. Sonner component are located in /app/src/components/ui/sonner.tsx"
+  ]
+}

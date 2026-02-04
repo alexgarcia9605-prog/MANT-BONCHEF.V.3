@@ -1,0 +1,218 @@
+/* Main App Layout */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Responsive sidebar */
+@media (max-width: 1024px) {
+    .sidebar-desktop {
+        display: none;
+    }
+}
+
+@media (min-width: 1025px) {
+    .sidebar-mobile {
+        display: none;
+    }
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Metric card */
+.metric-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at center, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Table styles */
+.data-table {
+    width: 100%;
+}
+
+.data-table th {
+    @apply text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground px-4 py-3 bg-muted/50;
+}
+
+.data-table td {
+    @apply px-4 py-4 text-sm;
+}
+
+.data-table tbody tr {
+    @apply border-b border-border/50 transition-colors duration-150;
+}
+
+.data-table tbody tr:hover {
+    @apply bg-muted/30;
+}
+
+/* Form styles */
+.form-group {
+    @apply space-y-2;
+}
+
+.form-label {
+    @apply text-sm font-medium text-foreground;
+}
+
+/* File upload zone */
+.file-upload-zone {
+    @apply border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors duration-200;
+}
+
+.file-upload-zone:hover {
+    @apply border-primary bg-primary/5;
+}
+
+.file-upload-zone.dragging {
+    @apply border-primary bg-primary/10;
+}
+
+/* Priority indicator */
+.priority-dot {
+    @apply w-2 h-2 rounded-full;
+}
+
+.priority-dot.critica {
+    @apply bg-red-500;
+}
+
+.priority-dot.alta {
+    @apply bg-orange-500;
+}
+
+.priority-dot.media {
+    @apply bg-yellow-500;
+}
+
+.priority-dot.baja {
+    @apply bg-green-500;
+}
+
+/* Status indicator */
+.status-dot {
+    @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.pendiente {
+    @apply bg-gray-400;
+}
+
+.status-dot.en_progreso {
+    @apply bg-blue-500;
+}
+
+.status-dot.completada {
+    @apply bg-green-500;
+}
+
+.status-dot.cancelada {
+    @apply bg-red-500;
+}
+
+/* Calendar event styles */
+.calendar-event {
+    @apply rounded px-2 py-1 text-xs font-medium truncate;
+}
+
+.calendar-event.preventivo {
+    @apply bg-blue-500/20 text-blue-700;
+}
+
+.calendar-event.correctivo {
+    @apply bg-purple-500/20 text-purple-700;
+}
+
+/* Loading spinner */
+.spinner {
+    @apply animate-spin rounded-full border-2 border-muted border-t-primary;
+}
+
+/* Empty state */
+.empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-center;
+}
+
+.empty-state-icon {
+    @apply w-16 h-16 text-muted-foreground/50 mb-4;
+}
+
+/* Modal overlay */
+.modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+}
+
+/* Attachment preview */
+.attachment-preview {
+    @apply relative rounded-lg overflow-hidden border border-border;
+}
+
+.attachment-preview:hover {
+    @apply bg-muted/30;
+}
+
+.attachment-preview img {
+    @apply w-full h-32 object-cover;
+}
+
+.attachment-preview .overlay {
+    @apply absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-200 flex items-center justify-center;
+}
+
+.attachment-preview:hover .overlay {
+    @apply opacity-100;
+}
+
+/* History timeline */
+.history-timeline {
+    @apply relative pl-6;
+}
+
+.history-timeline::before {
+    content: '';
+    @apply absolute left-2 top-0 bottom-0 w-0.5 bg-border;
+}
+
+.history-item {
+    @apply relative pb-4;
+}
+
+.history-item::before {
+    content: '';
+    @apply absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-primary;
+}
