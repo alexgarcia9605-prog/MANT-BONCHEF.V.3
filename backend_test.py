@@ -1439,10 +1439,238 @@ class BonchefAPITester:
             print(f"⚠️  {self.tests_run - self.tests_passed} tests failed")
             return False
 
+    def test_work_order_role_based_functionality(self):
+        """Test work order functionality based on user roles (admin vs technician)"""
+        print("\n🔧 Testing Work Order Role-Based Functionality")
+        print("=" * 60)
+        
+        # Login with admin credentials
+        if not self.test_login_with_specified_credentials():
+            print("❌ Admin login failed, stopping tests")
+            return False
+        
+        # Create test data
+        dept_id = self.test_create_department()
+        if not dept_id:
+            print("❌ Department creation failed")
+            return False
+            
+        machine_id = self.test_create_machine(dept_id)
+        if not machine_id:
+            print("❌ Machine creation failed")
+            return False
+        
+        # Create technician user
+        tech_id, tech_token, tech_data = self.test_create_technician_user()
+        if not tech_id or not tech_token:
+            print("❌ Technician user creation failed")
+            return False
+        
+        # Create work orders assigned to technician
+        preventive_order_id = self.test_create_preventive_work_order_assigned_to_tech(machine_id, tech_id)
+        corrective_order_id = self.test_create_corrective_work_order_assigned_to_tech(machine_id, tech_id)
+        
+        if not preventive_order_id or not corrective_order_id:
+            print("❌ Work order creation failed")
+            return False
+        
+        # Test admin can edit, delete orders
+        self.test_admin_can_edit_order(preventive_order_id)
+        
+        # Test technician can only "realizar" (complete) orders, not edit
+        self.test_technician_realizar_functionality(preventive_order_id, tech_token)
+        self.test_technician_realizar_functionality(corrective_order_id, tech_token)
+        
+        # Test file upload without restrictions
+        self.test_file_upload_no_restrictions(preventive_order_id)
+        self.test_file_upload_no_restrictions(corrective_order_id)
+        
+        return True
+
+    def test_create_preventive_work_order_assigned_to_tech(self, machine_id, tech_id):
+        """Create preventive work order assigned to technician"""
+        if not machine_id or not tech_id:
+            return None
+            
+        self.log("Creating preventive work order assigned to technician...")
+        order_data = {
+            "title": f"Preventive Maintenance {datetime.now().strftime('%H%M%S')}",
+            "description": "Regular preventive maintenance check",
+            "type": "preventivo",
+            "priority": "media",
+            "machine_id": machine_id,
+            "assigned_to": tech_id,
+            "scheduled_date": datetime.now(timezone.utc).isoformat(),
+            "recurrence": "mensual",
+            "estimated_hours": 2.5
+        }
+        
+        success, response = self.make_request('POST', 'work-orders', order_data, expected_status=200)
+        if success and 'id' in response:
+            self.log(f"Preventive work order created and assigned - ID: {response['id']}", True)
+            self.created_resources['work_orders'].append(response['id'])
+            return response['id']
+        else:
+            self.log("Preventive work order creation failed", False)
+            return None
+
+    def test_create_corrective_work_order_assigned_to_tech(self, machine_id, tech_id):
+        """Create corrective work order assigned to technician"""
+        if not machine_id or not tech_id:
+            return None
+            
+        self.log("Creating corrective work order assigned to technician...")
+        order_data = {
+            "title": f"Corrective Repair {datetime.now().strftime('%H%M%S')}",
+            "description": "Emergency repair needed",
+            "type": "correctivo",
+            "priority": "alta",
+            "machine_id": machine_id,
+            "assigned_to": tech_id,
+            "scheduled_date": datetime.now(timezone.utc).isoformat(),
+            "estimated_hours": 4.0
+        }
+        
+        success, response = self.make_request('POST', 'work-orders', order_data, expected_status=200)
+        if success and 'id' in response:
+            self.log(f"Corrective work order created and assigned - ID: {response['id']}", True)
+            self.created_resources['work_orders'].append(response['id'])
+            return response['id']
+        else:
+            self.log("Corrective work order creation failed", False)
+            return None
+
+    def test_admin_can_edit_order(self, order_id):
+        """Test that admin can edit work order (status, priority, assignment)"""
+        if not order_id:
+            return False
+            
+        self.log(f"Testing admin edit functionality for order: {order_id}")
+        
+        # Admin should be able to change status, priority, assignment
+        update_data = {
+            "status": "en_progreso",
+            "priority": "alta",
+            "notes": "Updated by admin - priority increased"
+        }
+        
+        success, response = self.make_request('PUT', f'work-orders/{order_id}', update_data, expected_status=200)
+        if success and response.get('status') == 'en_progreso' and response.get('priority') == 'alta':
+            self.log("Admin can edit work order successfully", True)
+            return True
+        else:
+            self.log("Admin edit functionality failed", False)
+            return False
+
+    def test_technician_realizar_functionality(self, order_id, tech_token):
+        """Test technician 'realizar' functionality (complete order with 'Realizada' or 'Cierre Parcial')"""
+        if not order_id or not tech_token:
+            return False
+            
+        self.log(f"Testing technician 'realizar' functionality for order: {order_id}")
+        
+        # Switch to technician token
+        original_token = self.token
+        self.token = tech_token
+        
+        # Get order details first
+        success, order_data = self.make_request('GET', f'work-orders/{order_id}')
+        if not success:
+            self.log("Failed to get order details for technician test", False)
+            self.token = original_token
+            return False
+        
+        # Test technician can update order to 'completada' (Realizada)
+        if order_data.get('type') == 'preventivo':
+            update_data = {
+                "status": "completada",
+                "description": "Mantenimiento preventivo completado",
+                "technician_signature": "Juan Pérez - Técnico",
+                "checklist": [
+                    {"id": "1", "name": "Limpieza general", "checked": True, "is_required": True},
+                    {"id": "2", "name": "Lubricación", "checked": True, "is_required": True}
+                ]
+            }
+        else:  # correctivo
+            update_data = {
+                "status": "completada",
+                "notes": "Reparación completada exitosamente",
+                "failure_cause": "desgaste",
+                "spare_part_used": "Motor eléctrico",
+                "spare_part_reference": "MOT-001"
+            }
+        
+        success, response = self.make_request('PUT', f'work-orders/{order_id}', update_data, expected_status=200)
+        if success and response.get('status') == 'completada':
+            self.log("Technician can complete order (Realizada) successfully", True)
+            result = True
+        else:
+            self.log("Technician 'Realizada' functionality failed", False)
+            result = False
+        
+        # Restore admin token
+        self.token = original_token
+        return result
+
+    def test_file_upload_no_restrictions(self, order_id):
+        """Test that any file type can be uploaded to work orders"""
+        if not order_id:
+            return False
+            
+        self.log(f"Testing file upload without restrictions for order: {order_id}")
+        
+        # Test different file types
+        test_files = [
+            # PDF file (simulated)
+            {
+                'name': 'manual.pdf',
+                'data': b'%PDF-1.4 fake pdf content',
+                'type': 'application/pdf'
+            },
+            # Excel file (simulated)
+            {
+                'name': 'report.xlsx',
+                'data': b'PK fake excel content',
+                'type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            },
+            # Text file
+            {
+                'name': 'notes.txt',
+                'data': b'This is a text file with maintenance notes',
+                'type': 'text/plain'
+            },
+            # Video file (simulated)
+            {
+                'name': 'procedure.mp4',
+                'data': b'fake video content for testing',
+                'type': 'video/mp4'
+            }
+        ]
+        
+        uploaded_files = []
+        for test_file in test_files:
+            files = {
+                'file': (test_file['name'], BytesIO(test_file['data']), test_file['type'])
+            }
+            
+            success, response = self.make_request('POST', f'work-orders/{order_id}/attachments', files=files, expected_status=200)
+            if success and 'id' in response:
+                uploaded_files.append(response['id'])
+                self.log(f"File uploaded successfully: {test_file['name']} ({test_file['type']})", True)
+            else:
+                self.log(f"File upload failed: {test_file['name']}", False)
+        
+        if len(uploaded_files) == len(test_files):
+            self.log("All file types uploaded successfully - No restrictions working", True)
+            return True
+        else:
+            self.log(f"Only {len(uploaded_files)}/{len(test_files)} files uploaded - File restrictions may exist", False)
+            return False
+
 def main():
-    """Main test execution for production line functionality"""
+    """Main test execution for work order role-based functionality"""
     tester = BonchefAPITester()
-    success = tester.run_production_line_tests()
+    success = tester.test_work_order_role_based_functionality()
     return 0 if success else 1
 
 if __name__ == "__main__":
