@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 
 class BonchefAPITester:
-    def __init__(self, base_url="https://maint-checklist.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://linea-tracker.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
         self.user_data = None
