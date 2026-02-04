@@ -1344,7 +1344,7 @@ async def update_work_order(order_id: str, update: WorkOrderUpdate, user: dict =
     
     # If user is assigned technician (not admin/supervisor), restrict fields
     if is_assigned_technician and not is_admin_or_supervisor:
-        allowed_fields = ["checklist", "description", "technician_signature", "notes"]
+        allowed_fields = ["checklist", "description", "technician_signature", "notes", "spare_part_id", "spare_part_quantity", "spare_part_used", "spare_part_reference", "failure_cause"]
         restricted_update = {k: v for k, v in update_dict.items() if k in allowed_fields}
         update_dict = restricted_update
     
@@ -1353,6 +1353,24 @@ async def update_work_order(order_id: str, update: WorkOrderUpdate, user: dict =
     # Auto-set closed_date when status changes to completada
     if update.status == "completada" and order.get("status") != "completada":
         update_dict["closed_date"] = datetime.now(timezone.utc).isoformat()
+        
+        # DESCONTAR REPUESTO DEL ALMACÉN AUTOMÁTICAMENTE
+        spare_part_id = update_dict.get("spare_part_id") or order.get("spare_part_id")
+        spare_part_quantity = update_dict.get("spare_part_quantity") or order.get("spare_part_quantity") or 1
+        
+        if spare_part_id:
+            spare_part = await db.spare_parts.find_one({"id": spare_part_id}, {"_id": 0})
+            if spare_part:
+                new_stock = spare_part["stock_current"] - spare_part_quantity
+                if new_stock < 0:
+                    new_stock = 0  # No permitir stock negativo
+                await db.spare_parts.update_one(
+                    {"id": spare_part_id}, 
+                    {"$set": {"stock_current": new_stock}}
+                )
+                # Registrar en historial
+                await add_history(order_id, "repuesto_usado", user, "spare_part", "", f"{spare_part['name']} x{spare_part_quantity}")
+    
     # Clear closed_date if reopening order
     elif update.status and update.status != "completada" and order.get("status") == "completada":
         update_dict["closed_date"] = None
