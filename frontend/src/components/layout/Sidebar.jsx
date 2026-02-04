@@ -16,7 +16,8 @@ import {
     BarChart3,
     FolderOpen,
     OctagonX,
-    Play
+    Play,
+    Package
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
