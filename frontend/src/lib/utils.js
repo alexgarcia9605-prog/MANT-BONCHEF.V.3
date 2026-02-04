@@ -70,7 +70,8 @@ export const getRoleLabel = (role) => {
     const labels = {
         admin: 'Administrador',
         supervisor: 'Supervisor',
-        tecnico: 'Técnico'
+        tecnico: 'Técnico',
+        encargado_linea: 'Encargado Línea'
     };
     return labels[role] || role;
 };
