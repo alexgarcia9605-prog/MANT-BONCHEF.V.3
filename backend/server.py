@@ -1120,6 +1120,10 @@ async def add_history(work_order_id: str, action: str, user: dict, field: str = 
 
 @api_router.post("/work-orders", response_model=WorkOrderResponse)
 async def create_work_order(order: WorkOrderCreate, user: dict = Depends(get_current_user)):
+    # Encargado de línea solo puede crear correctivos
+    if user["role"] == "encargado_linea" and order.type != "correctivo":
+        raise HTTPException(status_code=403, detail="Encargado de línea solo puede crear órdenes correctivas")
+    
     machine = await db.machines.find_one({"id": order.machine_id}, {"_id": 0})
     if not machine:
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
