@@ -52,6 +52,8 @@ export default function Machines() {
     const [viewMachine, setViewMachine] = useState(null);
     const [viewDialogOpen, setViewDialogOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [machinePreventivos, setMachinePreventivos] = useState([]);
+    const [loadingPreventivos, setLoadingPreventivos] = useState(false);
     const fileInputRef = useRef(null);
     const [form, setForm] = useState({
         name: '',
