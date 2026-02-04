@@ -280,18 +280,23 @@ export default function MachineStarts() {
                                 <div className="form-group">
                                     <Label className="flex items-center gap-1">
                                         <Target className="w-3 h-3" />
-                                        Hora Objetivo *
+                                        Hora Objetivo
                                     </Label>
                                     <Input
                                         type="time"
                                         value={form.target_time}
-                                        onChange={(e) => setForm({ ...form, target_time: e.target.value })}
+                                        readOnly
+                                        disabled
                                         data-testid="start-target"
-                                        className={form.target_time ? 'border-green-300 bg-green-50/50' : ''}
+                                        className="border-green-300 bg-green-50/50 cursor-not-allowed"
                                     />
-                                    {form.production_line_id && form.target_time && (
+                                    {form.production_line_id && form.target_time ? (
                                         <p className="text-xs text-green-600 mt-1">
-                                            Auto-llenado desde la línea
+                                            Predefinido desde la línea
+                                        </p>
+                                    ) : (
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            Selecciona una línea para ver la hora objetivo
                                         </p>
                                     )}
                                 </div>
