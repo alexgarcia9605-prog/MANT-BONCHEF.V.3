@@ -301,16 +301,21 @@ export default function MachineStarts() {
                                     )}
                                 </div>
                                 <div className="form-group">
-                                    <Label className="flex items-center gap-1">
+                                    <Label className="flex items-center gap-1 text-primary font-medium">
                                         <Clock className="w-3 h-3" />
-                                        Hora Real
+                                        Hora Real *
                                     </Label>
                                     <Input
                                         type="time"
                                         value={form.actual_time}
                                         onChange={(e) => setForm({ ...form, actual_time: e.target.value })}
                                         data-testid="start-actual"
+                                        className="border-primary/50 focus:border-primary"
+                                        required
                                     />
+                                    <p className="text-xs text-primary mt-1">
+                                        Ingresa la hora real de arranque
+                                    </p>
                                 </div>
                             </div>
 
