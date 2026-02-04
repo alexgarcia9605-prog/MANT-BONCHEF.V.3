@@ -454,8 +454,8 @@ export default function MachineStarts() {
                                         <thead>
                                             <tr>
                                                 <th>Fecha</th>
-                                                <th>Máquina</th>
-                                                <th>Sección</th>
+                                                <th>Línea de Producción</th>
+                                                <th>Departamento</th>
                                                 <th>Hora Objetivo</th>
                                                 <th>Hora Real</th>
                                                 <th>Estado</th>
@@ -467,7 +467,12 @@ export default function MachineStarts() {
                                             {filteredStarts.map((start) => (
                                                 <tr key={start.id}>
                                                     <td className="mono">{formatDate(start.date)}</td>
-                                                    <td className="font-medium">{start.machine_name}</td>
+                                                    <td className="font-medium">
+                                                        <div className="flex items-center gap-2">
+                                                            <GitBranch className="w-4 h-4 text-green-500" />
+                                                            {start.production_line_name || '-'}
+                                                        </div>
+                                                    </td>
                                                     <td>{start.department_name}</td>
                                                     <td className="mono">
                                                         <div className="flex items-center gap-1">
