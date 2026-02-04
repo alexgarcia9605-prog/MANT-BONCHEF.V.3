@@ -12,7 +12,8 @@ import {
     Users as UsersIcon,
     Shield,
     User,
-    Mail
+    Mail,
+    Trash2
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -44,6 +45,17 @@ export default function Users() {
             fetchUsers();
         } catch (error) {
             toast.error(error.response?.data?.detail || 'Error al actualizar rol');
+        }
+    };
+
+    const handleDelete = async (userId) => {
+        if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;
+        try {
+            await axios.delete(`${API}/users/${userId}`);
+            toast.success('Usuario eliminado');
+            fetchUsers();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Error al eliminar usuario');
         }
     };
 
