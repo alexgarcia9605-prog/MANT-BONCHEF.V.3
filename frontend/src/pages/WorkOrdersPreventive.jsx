@@ -114,6 +114,7 @@ export default function WorkOrdersPreventive() {
                                 <SelectItem value="all">Todos los estados</SelectItem>
                                 <SelectItem value="pendiente">Pendiente</SelectItem>
                                 <SelectItem value="en_progreso">En Progreso</SelectItem>
+                                <SelectItem value="cerrada_parcial">Cierre Parcial</SelectItem>
                                 <SelectItem value="completada">Completada</SelectItem>
                                 <SelectItem value="cancelada">Cancelada</SelectItem>
                             </SelectContent>
