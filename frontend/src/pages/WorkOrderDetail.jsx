@@ -872,7 +872,6 @@ export default function WorkOrderDetail() {
                             <div className="relative">
                                 <input
                                     type="file"
-                                    accept="image/*,.pdf"
                                     multiple
                                     onChange={handleFileUpload}
                                     className="absolute inset-0 opacity-0 cursor-pointer"
@@ -897,7 +896,7 @@ export default function WorkOrderDetail() {
                                         Arrastra archivos aquí o haz clic en "Subir archivo"
                                     </p>
                                     <p className="text-xs text-muted-foreground mt-1">
-                                        Formatos permitidos: imágenes y PDF
+                                        Cualquier tipo de archivo permitido
                                     </p>
                                 </div>
                             ) : (
