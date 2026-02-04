@@ -102,20 +102,20 @@ function App() {
 
                     {/* Protected Routes */}
                     <Route element={<ProtectedRoute />}>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/my-orders" element={<MyOrders />} />
-                        <Route path="/work-orders/preventive" element={<WorkOrdersPreventive />} />
-                        <Route path="/work-orders/preventive/new" element={<NewWorkOrderPreventive />} />
+                        <Route path="/dashboard" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Dashboard /></RoleRoute>} />
+                        <Route path="/my-orders" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><MyOrders /></RoleRoute>} />
+                        <Route path="/work-orders/preventive" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><WorkOrdersPreventive /></RoleRoute>} />
+                        <Route path="/work-orders/preventive/new" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><NewWorkOrderPreventive /></RoleRoute>} />
                         <Route path="/work-orders/corrective" element={<WorkOrdersCorrective />} />
                         <Route path="/work-orders/corrective/new" element={<NewWorkOrderCorrective />} />
                         <Route path="/work-orders/:id" element={<WorkOrderDetail />} />
-                        <Route path="/machines" element={<Machines />} />
-                        <Route path="/machine-stops" element={<MachineStops />} />
-                        <Route path="/machine-starts" element={<MachineStarts />} />
-                        <Route path="/departments" element={<Departments />} />
-                        <Route path="/calendar" element={<CalendarPage />} />
-                        <Route path="/analytics" element={<Analytics />} />
-                        <Route path="/users" element={<Users />} />
+                        <Route path="/machines" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Machines /></RoleRoute>} />
+                        <Route path="/machine-stops" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><MachineStops /></RoleRoute>} />
+                        <Route path="/machine-starts" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><MachineStarts /></RoleRoute>} />
+                        <Route path="/departments" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Departments /></RoleRoute>} />
+                        <Route path="/calendar" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><CalendarPage /></RoleRoute>} />
+                        <Route path="/analytics" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Analytics /></RoleRoute>} />
+                        <Route path="/users" element={<RoleRoute allowedRoles={['admin', 'supervisor']}><Users /></RoleRoute>} />
                     </Route>
 
                     {/* Default redirect */}
