@@ -123,8 +123,8 @@ export default function MachineStarts() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.production_line_id || !form.target_time || !form.date) {
-            toast.error('Completa todos los campos requeridos');
+        if (!form.production_line_id || !form.target_time || !form.actual_time || !form.date) {
+            toast.error('Completa todos los campos requeridos (línea, fecha y hora real)');
             return;
         }
 
