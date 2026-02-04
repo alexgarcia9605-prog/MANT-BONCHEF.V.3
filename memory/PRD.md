@@ -4,6 +4,7 @@
 
 ### 1. Administrador (admin)
 - Acceso total a todas las funciones
+- Puede **crear nuevos usuarios** con email, contraseña y rol
 - Gestión de usuarios y roles
 - Crear/editar/eliminar todo
 
@@ -14,31 +15,27 @@
 ### 3. Técnico (tecnico)
 - Acceso a órdenes asignadas
 - Dashboard, máquinas, departamentos
-- Puede realizar órdenes preventivas/correctivas
 
-### 4. Encargado de Línea (encargado_linea) - NUEVO
-- **Solo acceso a Órdenes Correctivas**
+### 4. Encargado de Línea (encargado_linea)
+- Solo acceso a Órdenes Correctivas
 - Puede crear nuevas órdenes correctivas
-- Puede ver el detalle de órdenes
-- NO puede acceder a: Dashboard, Preventivos, Máquinas, Departamentos, etc.
-- Al hacer login es redirigido a /work-orders/corrective
 
-## Cambios Implementados
+## Funcionalidades Implementadas
 
-### Flujo "Realizar" con Cierre Parcial
-- Botón "Cierre Parcial" solo dentro del diálogo "Realizar"
-- Campo obligatorio para explicar motivo del cierre parcial
+### Gestión de Usuarios (Admin)
+- Botón "Nuevo Usuario" en página Usuarios
+- Formulario con: Nombre, Email, Contraseña, Rol
+- Endpoint POST /api/auth/register-admin (solo admin)
 
-### Filtros de Pendientes
-- "Pendientes" incluye: pendiente, en_progreso, cerrada_parcial
+### Órdenes de Trabajo
+- Flujo "Realizar" con cierre parcial y campo de razón
+- Filtros "Pendientes" incluyen cierre parcial
+- Preventivos asociados visibles en cada máquina
 
-### Preventivos en Máquinas
-- Al ver una máquina se muestran los preventivos asociados
-
-### Otros
+### Sistema
 - Archivos sin límite en máquinas y órdenes
 - Eliminación de entidades habilitada
-- Hora objetivo predefinida en líneas
+- Hora objetivo predefinida en líneas de producción
 
 ## Arquitectura
 - Frontend: React + TailwindCSS
