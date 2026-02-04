@@ -64,6 +64,10 @@ const PublicRoute = ({ children }) => {
     }
 
     if (user) {
+        // Encargado de línea va directo a correctivos
+        if (user.role === 'encargado_linea') {
+            return <Navigate to="/work-orders/corrective" replace />;
+        }
         return <Navigate to="/dashboard" replace />;
     }
 
