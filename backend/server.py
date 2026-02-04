@@ -415,6 +415,29 @@ async def login(credentials: UserLogin):
 async def get_me(user: dict = Depends(get_current_user)):
     return UserResponse(id=user["id"], email=user["email"], name=user["name"], role=user["role"], created_at=user["created_at"])
 
+@api_router.post("/auth/register-admin", response_model=dict)
+async def register_by_admin(user_data: UserCreate, admin: dict = Depends(require_role(["admin"]))):
+    """Crear un nuevo usuario - Solo admin puede usar este endpoint"""
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="El email ya está registrado")
+    
+    if user_data.role not in ["admin", "supervisor", "tecnico", "encargado_linea"]:
+        raise HTTPException(status_code=400, detail="Rol inválido")
+    
+    user_id = str(uuid.uuid4())
+    user = {
+        "id": user_id,
+        "email": user_data.email,
+        "password": hash_password(user_data.password),
+        "name": user_data.name,
+        "role": user_data.role,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": admin["id"]
+    }
+    await db.users.insert_one(user)
+    return {"message": "Usuario creado correctamente", "user": {"id": user_id, "email": user_data.email, "name": user_data.name, "role": user_data.role}}
+
 # ============== USERS ENDPOINTS ==============
 
 @api_router.get("/users", response_model=List[UserResponse])
