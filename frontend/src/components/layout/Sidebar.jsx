@@ -22,16 +22,16 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 
 const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/my-orders', icon: FolderOpen, label: 'Mis Órdenes' },
-    { to: '/work-orders/preventive', icon: CalendarClock, label: 'Órdenes Preventivas' },
+    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/my-orders', icon: FolderOpen, label: 'Mis Órdenes', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/work-orders/preventive', icon: CalendarClock, label: 'Órdenes Preventivas', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/work-orders/corrective', icon: AlertTriangle, label: 'Órdenes Correctivas' },
-    { to: '/machine-stops', icon: OctagonX, label: 'Paradas' },
-    { to: '/machine-starts', icon: Play, label: 'Arranques' },
-    { to: '/machines', icon: Cog, label: 'Máquinas' },
-    { to: '/departments', icon: Building2, label: 'Departamentos' },
-    { to: '/calendar', icon: Calendar, label: 'Calendario' },
-    { to: '/analytics', icon: BarChart3, label: 'Datos' },
+    { to: '/machine-stops', icon: OctagonX, label: 'Paradas', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/machine-starts', icon: Play, label: 'Arranques', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/machines', icon: Cog, label: 'Máquinas', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/departments', icon: Building2, label: 'Departamentos', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/calendar', icon: Calendar, label: 'Calendario', roles: ['admin', 'supervisor', 'tecnico'] },
+    { to: '/analytics', icon: BarChart3, label: 'Datos', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/users', icon: Users, label: 'Usuarios', roles: ['admin', 'supervisor'] }
 ];
 
