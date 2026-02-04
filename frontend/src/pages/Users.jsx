@@ -121,7 +121,102 @@ export default function Users() {
             <PageHeader
                 title="Usuarios"
                 description="Gestiona los usuarios y sus roles"
-            />
+            >
+                {hasRole(['admin']) && (
+                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button data-testid="new-user-btn">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Nuevo Usuario
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                    <User className="w-5 h-5" />
+                                    Crear Nuevo Usuario
+                                </DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleCreateUser} className="space-y-4 mt-4">
+                                <div className="form-group">
+                                    <Label>Nombre completo *</Label>
+                                    <Input
+                                        value={newUser.name}
+                                        onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                                        placeholder="Ej: Juan Pérez"
+                                        data-testid="new-user-name"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <Label className="flex items-center gap-1">
+                                        <Mail className="w-3 h-3" />
+                                        Correo electrónico *
+                                    </Label>
+                                    <Input
+                                        type="email"
+                                        value={newUser.email}
+                                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                                        placeholder="correo@empresa.com"
+                                        data-testid="new-user-email"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <Label className="flex items-center gap-1">
+                                        <Key className="w-3 h-3" />
+                                        Contraseña *
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPassword ? 'text' : 'password'}
+                                            value={newUser.password}
+                                            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                                            placeholder="Mínimo 6 caracteres"
+                                            data-testid="new-user-password"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <Label className="flex items-center gap-1">
+                                        <Shield className="w-3 h-3" />
+                                        Rol del usuario *
+                                    </Label>
+                                    <Select
+                                        value={newUser.role}
+                                        onValueChange={(v) => setNewUser({ ...newUser, role: v })}
+                                    >
+                                        <SelectTrigger data-testid="new-user-role">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="tecnico">Técnico</SelectItem>
+                                            <SelectItem value="encargado_linea">Encargado de Línea</SelectItem>
+                                            <SelectItem value="supervisor">Supervisor</SelectItem>
+                                            <SelectItem value="admin">Administrador</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button type="submit" className="w-full" disabled={saving}>
+                                    {saving ? (
+                                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                    ) : (
+                                        <Plus className="w-4 h-4 mr-2" />
+                                    )}
+                                    Crear Usuario
+                                </Button>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                )}
+            </PageHeader>
 
             <Card>
                 <CardContent className="p-0">
