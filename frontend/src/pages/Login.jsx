@@ -92,7 +92,7 @@ export default function Login() {
                             </div>
                             <Button
                                 type="submit"
-                                className="w-full h-12 text-base font-semibold"
+                                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 shadow-lg shadow-primary/25"
                                 disabled={loading}
                                 data-testid="login-submit"
                             >
@@ -104,7 +104,7 @@ export default function Login() {
                             </Button>
                         </form>
                         <div className="mt-6 text-center">
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-white/40">
                                 ¿No tienes cuenta?{' '}
                                 <Link
                                     to="/register"
