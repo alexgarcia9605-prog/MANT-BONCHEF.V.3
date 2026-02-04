@@ -30,30 +30,38 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen grid-texture flex items-center justify-center p-4">
-            <div className="w-full max-w-md animate-slide-up">
-                {/* Logo */}
-                <div className="flex items-center justify-center gap-3 mb-8">
-                    <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-lg">
-                        <Wrench className="w-8 h-8 text-white" />
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:32px_32px]" />
+            
+            {/* Glow effects */}
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-orange-500/10 rounded-full blur-[96px] pointer-events-none" />
+            
+            <div className="w-full max-w-md animate-slide-up relative z-10">
+                {/* Logo - Elegant */}
+                <div className="flex items-center justify-center gap-4 mb-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center shadow-2xl shadow-primary/30 ring-1 ring-white/10">
+                        <Wrench className="w-9 h-9 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight">Bonchef</h1>
-                        <p className="text-sm text-muted-foreground">Mantenimiento</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-white">Bonchef</h1>
+                        <p className="text-xs uppercase tracking-[0.2em] text-white/40">Sistema de Mantenimiento</p>
                     </div>
                 </div>
 
-                <Card className="border-border/50 shadow-lg">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-xl">Iniciar Sesión</CardTitle>
-                        <CardDescription>
+                <Card className="border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+                    <CardHeader className="text-center pb-2">
+                        <CardTitle className="text-xl text-white">Iniciar Sesión</CardTitle>
+                        <CardDescription className="text-white/50">
                             Ingresa tus credenciales para acceder
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="form-group">
-                                <Label htmlFor="email" className="form-label">
+                                <Label htmlFor="email" className="text-white/70 text-sm">
                                     Email
                                 </Label>
                                 <Input
@@ -64,10 +72,11 @@ export default function Login() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     data-testid="login-email"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-primary"
                                 />
                             </div>
                             <div className="form-group">
-                                <Label htmlFor="password" className="form-label">
+                                <Label htmlFor="password" className="text-white/70 text-sm">
                                     Contraseña
                                 </Label>
                                 <Input
@@ -78,6 +87,7 @@ export default function Login() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     data-testid="login-password"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-primary"
                                 />
                             </div>
                             <Button
