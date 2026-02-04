@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Test for Bonchef Mantenimiento - Realizar Functionality
-Tests the "Realizar" (Execute) functionality for work orders
+Backend API Test for Bonchef Mantenimiento - Encargado Línea Role
+Tests the 'encargado_linea' role functionality and restrictions
 """
 
 import requests
@@ -9,15 +9,16 @@ import sys
 import json
 from datetime import datetime
 
-class RealizarAPITester:
+class EncargadoLineaAPITester:
     def __init__(self, base_url="https://linea-tracker.preview.emergentagent.com"):
         self.base_url = base_url
-        self.token = None
+        self.admin_token = None
+        self.encargado_token = None
         self.tests_run = 0
         self.tests_passed = 0
-        self.user_id = None
-        self.preventive_order_id = None
-        self.corrective_order_id = None
+        self.admin_user_id = None
+        self.encargado_user_id = None
+        self.test_machine_id = None
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
