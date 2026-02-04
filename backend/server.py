@@ -159,6 +159,64 @@ class MachineStartResponse(BaseModel):
     created_by_name: Optional[str] = ""
     created_at: str
 
+# ============== SPARE PARTS (ALMACÉN) ==============
+
+class SparePartCreate(BaseModel):
+    name: str
+    internal_reference: str  # Referencia interna
+    external_reference: Optional[str] = ""  # Referencia del proveedor
+    description: Optional[str] = ""
+    location: Optional[str] = ""  # Ubicación en almacén
+    machine_id: Optional[str] = None  # Máquina a la que pertenece
+    stock_current: int = 0
+    stock_min: int = 0
+    stock_max: int = 100
+    unit: str = "unidad"  # unidad, kg, litros, etc.
+    supplier: Optional[str] = ""  # Proveedor
+    price: Optional[float] = 0
+
+class SparePartResponse(BaseModel):
+    id: str
+    name: str
+    internal_reference: str
+    external_reference: str
+    description: str
+    location: str
+    machine_id: Optional[str]
+    machine_name: Optional[str]
+    stock_current: int
+    stock_min: int
+    stock_max: int
+    unit: str
+    supplier: str
+    price: float
+    status: str  # bajo, normal, alto
+    created_at: str
+    created_by: str
+
+class SparePartRequestCreate(BaseModel):
+    spare_part_id: str
+    quantity: int
+    reason: str
+    urgency: str = "normal"  # baja, normal, alta, urgente
+
+class SparePartRequestResponse(BaseModel):
+    id: str
+    spare_part_id: str
+    spare_part_name: str
+    internal_reference: str
+    quantity: int
+    reason: str
+    urgency: str
+    status: str  # pendiente, aprobada, rechazada, entregada
+    requested_by: str
+    requested_by_name: str
+    requested_at: str
+    resolved_by: Optional[str]
+    resolved_by_name: Optional[str]
+    resolved_at: Optional[str]
+    notes: Optional[str]
+
 class FileAttachment(BaseModel):
     id: str
     filename: str
