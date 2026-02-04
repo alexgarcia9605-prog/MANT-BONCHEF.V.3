@@ -1605,7 +1605,7 @@ class BonchefAPITester:
             self.log("Technician can complete order (Realizada) successfully", True)
             result = True
         else:
-            self.log("Technician 'Realizada' functionality failed", False)
+            self.log(f"Technician 'Realizada' functionality failed - Response: {response}", False)
             result = False
         
         # Restore admin token
