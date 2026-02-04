@@ -62,6 +62,8 @@ export default function WorkOrderDetail() {
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [realizarDialogOpen, setRealizarDialogOpen] = useState(false);
+    const [showPartialCloseReason, setShowPartialCloseReason] = useState(false);
+    const [partialCloseReason, setPartialCloseReason] = useState('');
     const [postponeDialogOpen, setPostponeDialogOpen] = useState(false);
     const [partialCloseDialogOpen, setPartialCloseDialogOpen] = useState(false);
     const [postponeData, setPostponeData] = useState({ date: '', reason: '' });
