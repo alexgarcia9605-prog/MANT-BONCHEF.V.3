@@ -1241,8 +1241,68 @@ class BonchefAPITester:
             self.log("Failed to create test corrective orders", False)
             return False
 
-    # ============== MAIN TEST RUNNER ==============
-    def run_all_tests(self):
+    def run_production_line_tests(self):
+        """Run production line specific tests"""
+        print("🚀 Starting Production Line Startup Form Tests")
+        print("=" * 60)
+        
+        # Test with specified credentials
+        if not self.test_login_with_specified_credentials():
+            print("❌ Login with specified credentials failed, stopping tests")
+            return False
+        
+        # Test departments
+        dept_id = self.test_create_department()
+        if not dept_id:
+            print("❌ Department creation failed, stopping tests")
+            return False
+            
+        self.test_get_departments()
+        
+        # Test production lines
+        production_line_id = self.test_create_production_line(dept_id)
+        if not production_line_id:
+            print("❌ Production line creation failed, stopping tests")
+            return False
+            
+        self.test_get_production_lines()
+        self.test_get_production_lines_by_department(dept_id)
+        
+        # Test machine starts with production lines
+        start_id = self.test_create_machine_start_with_production_line(production_line_id)
+        self.test_get_machine_starts()
+        if start_id:
+            # Test updating machine start
+            update_data = {
+                "production_line_id": production_line_id,
+                "target_time": "06:00",
+                "actual_time": "05:55",  # Earlier than target - should be on time
+                "delay_reason": "",
+                "date": datetime.now().strftime('%Y-%m-%d')
+            }
+            
+            success, response = self.make_request('PUT', f'machine-starts/{start_id}', update_data, expected_status=200)
+            if success and response.get('on_time') == True:
+                self.log("Machine start updated - now on time", True)
+            else:
+                self.log("Machine start update failed", False)
+        
+        # Test compliance stats
+        self.test_machine_starts_compliance_stats()
+        
+        # Test on-time vs delayed scenarios with production lines
+        self.test_machine_starts_on_time_vs_delayed_production_lines(production_line_id)
+        
+        # Results
+        print("\n" + "=" * 60)
+        print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")
+        
+        if self.tests_passed == self.tests_run:
+            print("🎉 All production line tests passed!")
+            return True
+        else:
+            print(f"⚠️  {self.tests_run - self.tests_passed} tests failed")
+            return False
         """Run comprehensive test suite"""
         print("🚀 Starting Bonchef Mantenimiento CMMS API Tests")
         print("=" * 60)
