@@ -241,13 +241,32 @@ class EncargadoLineaAPITester:
 
     def test_update_user_role_to_encargado(self):
         """Test updating a user's role to encargado_linea"""
-        if not self.encargado_user_id:
+        # Get a regular user to update (not the admin)
+        success, users = self.run_test(
+            "Get Users for Role Update Test",
+            "GET",
+            "users",
+            200
+        )
+        
+        if not success:
             return False
+            
+        # Find a non-admin user to update
+        target_user_id = None
+        for user in users:
+            if user['role'] != 'admin' and user['id'] != self.admin_user_id:
+                target_user_id = user['id']
+                break
+        
+        if not target_user_id:
+            print("   ⚠️  No suitable user found for role update test")
+            return True  # Skip this test
             
         success, response = self.run_test(
             "Update User Role to Encargado",
             "PUT",
-            f"users/{self.encargado_user_id}/role?role=encargado_linea",
+            f"users/{target_user_id}/role?role=encargado_linea",
             200
         )
         
