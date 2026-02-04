@@ -154,6 +154,17 @@ export default function Machines() {
     const openViewDialog = async (machine) => {
         setViewMachine(machine);
         setViewDialogOpen(true);
+        setLoadingPreventivos(true);
+        try {
+            // Cargar preventivos asociados a esta máquina
+            const res = await axios.get(`${API}/work-orders?machine_id=${machine.id}&type=preventivo`);
+            setMachinePreventivos(res.data);
+        } catch (error) {
+            console.error('Error loading preventivos:', error);
+            setMachinePreventivos([]);
+        } finally {
+            setLoadingPreventivos(false);
+        }
     };
 
     const handleFileUpload = async (e) => {
