@@ -49,7 +49,8 @@ import {
     CalendarCheck,
     CalendarClock,
     AlertOctagon,
-    CheckCircle2
+    CheckCircle2,
+    Package
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
