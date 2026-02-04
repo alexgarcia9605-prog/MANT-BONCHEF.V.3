@@ -4,7 +4,10 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { getRoleLabel, formatDate } from '../lib/utils';
@@ -13,7 +16,12 @@ import {
     Shield,
     User,
     Mail,
-    Trash2
+    Trash2,
+    Plus,
+    Loader2,
+    Eye,
+    EyeOff,
+    Key
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -22,6 +30,15 @@ export default function Users() {
     const { hasRole, user: currentUser } = useAuth();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [newUser, setNewUser] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: 'tecnico'
+    });
 
     useEffect(() => {
         fetchUsers();
@@ -56,6 +73,31 @@ export default function Users() {
             fetchUsers();
         } catch (error) {
             toast.error(error.response?.data?.detail || 'Error al eliminar usuario');
+        }
+    };
+
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        if (!newUser.name || !newUser.email || !newUser.password) {
+            toast.error('Completa todos los campos');
+            return;
+        }
+        if (newUser.password.length < 6) {
+            toast.error('La contraseña debe tener al menos 6 caracteres');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            await axios.post(`${API}/auth/register-admin`, newUser);
+            toast.success('Usuario creado correctamente');
+            setDialogOpen(false);
+            setNewUser({ name: '', email: '', password: '', role: 'tecnico' });
+            fetchUsers();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Error al crear usuario');
+        } finally {
+            setSaving(false);
         }
     };
 
