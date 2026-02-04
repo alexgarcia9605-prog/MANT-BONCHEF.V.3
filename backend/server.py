@@ -1430,19 +1430,14 @@ async def upload_attachment(
     if not order:
         raise HTTPException(status_code=404, detail="Orden no encontrada")
     
-    # Validate file type
-    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Solo imágenes y PDFs")
-    
-    # Read and encode file
+    # Read and encode file - any file type allowed
     content = await file.read()
     file_id = str(uuid.uuid4())
     
     attachment = {
         "id": file_id,
         "filename": file.filename,
-        "file_type": file.content_type,
+        "file_type": file.content_type or "application/octet-stream",
         "file_size": len(content),
         "data": base64.b64encode(content).decode('utf-8'),
         "uploaded_at": datetime.now(timezone.utc).isoformat(),
