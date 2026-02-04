@@ -893,7 +893,7 @@ export default function WorkOrderDetail() {
                                 <div className="file-upload-zone">
                                     <Upload className="w-10 h-10 mx-auto text-muted-foreground mb-2" />
                                     <p className="text-sm text-muted-foreground">
-                                        Arrastra archivos aquí o haz clic en "Subir archivo"
+                                        Arrastra archivos aquí o haz clic en Subir archivo
                                     </p>
                                     <p className="text-xs text-muted-foreground mt-1">
                                         Cualquier tipo de archivo permitido
