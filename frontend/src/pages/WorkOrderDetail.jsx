@@ -481,44 +481,95 @@ export default function WorkOrderDetail() {
                                                     </>
                                                 )}
                                                 
+                                                {/* Sección Cierre Parcial con razón */}
+                                                {showPartialCloseReason && (
+                                                    <div className="p-4 border-2 border-purple-300 rounded-lg bg-purple-50/50 space-y-3">
+                                                        <div className="flex items-center gap-2 text-purple-700">
+                                                            <AlertOctagon className="w-5 h-5" />
+                                                            <span className="font-medium">Cierre Parcial</span>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <Label className="text-purple-700">¿Por qué el cierre parcial? *</Label>
+                                                            <Textarea
+                                                                value={partialCloseReason}
+                                                                onChange={(e) => setPartialCloseReason(e.target.value)}
+                                                                placeholder="Explica qué se ha realizado y qué queda pendiente..."
+                                                                rows={3}
+                                                                className="border-purple-300"
+                                                                data-testid="partial-close-reason"
+                                                            />
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <Button 
+                                                                onClick={async () => {
+                                                                    if (!partialCloseReason.trim()) {
+                                                                        toast.error('Debes indicar el motivo del cierre parcial');
+                                                                        return;
+                                                                    }
+                                                                    try {
+                                                                        await axios.put(`${API}/work-orders/${id}`, { 
+                                                                            ...editData, 
+                                                                            status: 'cerrada_parcial',
+                                                                            partial_close_notes: partialCloseReason
+                                                                        });
+                                                                        toast.success('Orden con CIERRE PARCIAL');
+                                                                        setRealizarDialogOpen(false);
+                                                                        setShowPartialCloseReason(false);
+                                                                        setPartialCloseReason('');
+                                                                        fetchOrder();
+                                                                    } catch (error) {
+                                                                        toast.error('Error al cerrar parcialmente');
+                                                                    }
+                                                                }} 
+                                                                className="flex-1 bg-purple-600 hover:bg-purple-700"
+                                                                data-testid="confirm-partial-close"
+                                                            >
+                                                                Confirmar Cierre Parcial
+                                                            </Button>
+                                                            <Button 
+                                                                variant="outline"
+                                                                onClick={() => {
+                                                                    setShowPartialCloseReason(false);
+                                                                    setPartialCloseReason('');
+                                                                }}
+                                                            >
+                                                                Cancelar
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
                                                 {/* Botones de acción - REALIZADA o CIERRE PARCIAL */}
-                                                <div className="flex gap-3 pt-4 border-t">
-                                                    <Button 
-                                                        onClick={async () => {
-                                                            try {
-                                                                await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'completada' });
-                                                                toast.success('Orden marcada como REALIZADA');
-                                                                setRealizarDialogOpen(false);
-                                                                fetchOrder();
-                                                            } catch (error) {
-                                                                toast.error('Error al marcar como realizada');
-                                                            }
-                                                        }} 
-                                                        className="flex-1 bg-green-600 hover:bg-green-700"
-                                                        data-testid="btn-realizada"
-                                                    >
-                                                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                                                        Realizada
-                                                    </Button>
-                                                    <Button 
-                                                        onClick={async () => {
-                                                            try {
-                                                                await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'cerrada_parcial' });
-                                                                toast.success('Orden con CIERRE PARCIAL');
-                                                                setRealizarDialogOpen(false);
-                                                                fetchOrder();
-                                                            } catch (error) {
-                                                                toast.error('Error al cerrar parcialmente');
-                                                            }
-                                                        }} 
-                                                        variant="outline"
-                                                        className="flex-1 border-purple-500 text-purple-600 hover:bg-purple-50"
-                                                        data-testid="btn-cierre-parcial"
-                                                    >
-                                                        <AlertOctagon className="w-4 h-4 mr-2" />
-                                                        Cierre Parcial
-                                                    </Button>
-                                                </div>
+                                                {!showPartialCloseReason && (
+                                                    <div className="flex gap-3 pt-4 border-t">
+                                                        <Button 
+                                                            onClick={async () => {
+                                                                try {
+                                                                    await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'completada' });
+                                                                    toast.success('Orden marcada como REALIZADA');
+                                                                    setRealizarDialogOpen(false);
+                                                                    fetchOrder();
+                                                                } catch (error) {
+                                                                    toast.error('Error al marcar como realizada');
+                                                                }
+                                                            }} 
+                                                            className="flex-1 bg-green-600 hover:bg-green-700"
+                                                            data-testid="btn-realizada"
+                                                        >
+                                                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                                                            Realizada
+                                                        </Button>
+                                                        <Button 
+                                                            onClick={() => setShowPartialCloseReason(true)}
+                                                            variant="outline"
+                                                            className="flex-1 border-purple-500 text-purple-600 hover:bg-purple-50"
+                                                            data-testid="btn-cierre-parcial"
+                                                        >
+                                                            <AlertOctagon className="w-4 h-4 mr-2" />
+                                                            Cierre Parcial
+                                                        </Button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </DialogContent>
                                     </Dialog>
