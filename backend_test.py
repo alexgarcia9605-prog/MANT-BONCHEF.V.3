@@ -917,17 +917,16 @@ class BonchefAPITester:
             self.log("Failed to create all stop types", False)
             return []
 
-    # ============== MACHINE STARTS TESTS ==============
-    def test_create_machine_start(self, machine_id, dept_id):
-        """Test creating a machine start"""
-        if not machine_id or not dept_id:
-            self.log("No machine ID or department ID available for machine start creation", False)
+    # ============== MACHINE STARTS TESTS (PRODUCTION LINES) ==============
+    def test_create_machine_start_with_production_line(self, production_line_id):
+        """Test creating a machine start with production line"""
+        if not production_line_id:
+            self.log("No production line ID available for machine start creation", False)
             return None
             
-        self.log("Testing machine start creation...")
+        self.log("Testing machine start creation with production line...")
         start_data = {
-            "machine_id": machine_id,
-            "department_id": dept_id,
+            "production_line_id": production_line_id,
             "target_time": "06:00",
             "actual_time": "06:15",
             "delay_reason": "Retraso en el suministro de materias primas",
@@ -941,6 +940,84 @@ class BonchefAPITester:
         else:
             self.log("Machine start creation failed", False)
             return None
+
+    def test_machine_starts_on_time_vs_delayed_production_lines(self, production_line_id):
+        """Test creating both on-time and delayed machine starts with production lines"""
+        if not production_line_id:
+            return False
+            
+        self.log("Testing on-time vs delayed machine starts with production lines...")
+        
+        # Create on-time start
+        on_time_data = {
+            "production_line_id": production_line_id,
+            "target_time": "08:00",
+            "actual_time": "07:55",  # 5 minutes early
+            "delay_reason": "",
+            "date": datetime.now().strftime('%Y-%m-%d')
+        }
+        
+        success1, response1 = self.make_request('POST', 'machine-starts', on_time_data, expected_status=200)
+        
+        # Create delayed start
+        delayed_data = {
+            "production_line_id": production_line_id,
+            "target_time": "09:00",
+            "actual_time": "09:30",  # 30 minutes late
+            "delay_reason": "Problema con el sistema de arranque automático",
+            "date": datetime.now().strftime('%Y-%m-%d')
+        }
+        
+        success2, response2 = self.make_request('POST', 'machine-starts', delayed_data, expected_status=200)
+        
+        if success1 and success2:
+            on_time = response1.get('on_time', False)
+            delayed = not response2.get('on_time', True)
+            delay_minutes = response2.get('delay_minutes', 0)
+            
+            if on_time and delayed and delay_minutes > 0:
+                self.log(f"Production line starts working - Delay: {delay_minutes} minutes", True)
+                return True
+            else:
+                self.log("Production line on-time vs delayed calculation failed", False)
+                return False
+        else:
+            self.log("Failed to create production line starts", False)
+            return False
+
+    def test_login_with_specified_credentials(self):
+        """Test login with specified admin credentials"""
+        self.log("Testing login with specified admin credentials...")
+        login_data = {
+            "email": "admin@bonchef.com",
+            "password": "admin123"
+        }
+        
+        success, response = self.make_request('POST', 'auth/login', login_data, expected_status=200)
+        if success and 'token' in response:
+            self.log("Login with admin@bonchef.com successful", True)
+            self.token = response['token']
+            self.user_data = response['user']
+            return True
+        else:
+            # Try to register first if login fails
+            self.log("Login failed, trying to register admin user...")
+            register_data = {
+                "email": "admin@bonchef.com",
+                "password": "admin123",
+                "name": "Admin User",
+                "role": "admin"
+            }
+            
+            success, response = self.make_request('POST', 'auth/register', register_data, expected_status=200)
+            if success and 'token' in response:
+                self.log("Admin user registered and logged in", True)
+                self.token = response['token']
+                self.user_data = response['user']
+                return True
+            else:
+                self.log("Both login and registration failed", False)
+                return False
 
     def test_get_machine_starts(self):
         """Test getting all machine starts"""
