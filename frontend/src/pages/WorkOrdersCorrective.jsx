@@ -51,7 +51,11 @@ export default function WorkOrdersCorrective() {
         const matchesSearch = order.title.toLowerCase().includes(search.toLowerCase()) ||
             order.machine_name?.toLowerCase().includes(search.toLowerCase()) ||
             order.part_number?.toLowerCase().includes(search.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        // "pendientes" incluye pendiente, en_progreso y cerrada_parcial
+        let matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        if (statusFilter === 'pendientes') {
+            matchesStatus = ['pendiente', 'en_progreso', 'cerrada_parcial'].includes(order.status);
+        }
         const matchesDept = departmentFilter === 'all' || order.department_name === departmentFilter;
         return matchesSearch && matchesStatus && matchesDept;
     });
@@ -67,7 +71,9 @@ export default function WorkOrdersCorrective() {
         pendiente: 'bg-gray-500/15 text-gray-700',
         en_progreso: 'bg-blue-500/15 text-blue-700',
         completada: 'bg-green-500/15 text-green-700',
-        cancelada: 'bg-red-500/15 text-red-700'
+        cancelada: 'bg-red-500/15 text-red-700',
+        cerrada_parcial: 'bg-purple-500/15 text-purple-700',
+        pospuesta: 'bg-amber-500/15 text-amber-700'
     };
 
     if (loading) {
