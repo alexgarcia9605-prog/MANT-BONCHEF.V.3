@@ -1082,7 +1082,7 @@ async def get_start_compliance_stats(
             "compliance_rate": round(compliance_rate, 1)
         },
         "by_department": [{"department": k, **v} for k, v in dept_stats.items()],
-        "by_machine": [{"machine": k, **v} for k, v in machine_stats.items()],
+        "by_machine": [{"machine": k, **v} for k, v in line_stats.items()],
         "daily_chart": daily_chart
     }
 
