@@ -1,56 +1,38 @@
 # Bonchef Mantenimiento - PRD
 
 ## Problema Original
-Sistema completo de gestión de mantenimiento con:
-1. Órdenes preventivas con checklist, observaciones, firma
-2. Órdenes correctivas con causas de fallo
-3. Posponer y cierre parcial de órdenes
-4. Archivos en máquinas accesibles a todos
-5. Vista "Mis Órdenes" para técnicos
-6. Análisis de correctivos recurrentes
-7. **Paradas de máquinas** (avería, producción, calidad)
-8. **Arranques de máquinas** con hora objetivo vs real y gráficas
+Sistema de mantenimiento industrial para gestionar máquinas, órdenes de trabajo, paradas y arranques de líneas de producción.
+
+## Cambio Solicitado (Feb 2026)
+Modificar el formulario de "Arranque de Líneas" para que al registrar un arranque:
+- Solo se muestre la línea de producción creada dentro de cada departamento
+- Se auto-llene la hora objetivo desde la configuración de la línea
+- Se registre la hora real del arranque
+
+## Lo Implementado
+1. **Frontend - MachineStarts.jsx**
+   - Eliminados campos de "Máquina" y "Departamento/Sección"
+   - Agregado selector de "Línea de Producción" agrupado por departamento
+   - Auto-llenado de hora objetivo al seleccionar una línea
+   - Tabla actualizada para mostrar "Línea de Producción" en lugar de "Máquina"
+
+2. **Backend - server.py**
+   - Corregido bug: `machine_stats` → `line_stats` en endpoint de estadísticas
 
 ## Arquitectura
-- **Backend**: FastAPI con MongoDB
-- **Frontend**: React con Tailwind CSS y Recharts
-- **Auth**: JWT con roles (admin, supervisor, tecnico)
+- **Frontend**: React + TailwindCSS
+- **Backend**: FastAPI + MongoDB
+- **Base de datos**: MongoDB
 
-## Implementado (3 Feb 2026)
+## Flujo de Arranques
+1. Usuario va a "Arranques"
+2. Clic en "Registrar Arranque"
+3. Selecciona fecha y línea de producción
+4. Hora objetivo se auto-llena
+5. Usuario ingresa hora real
+6. Sistema calcula si fue a tiempo o retrasado
 
-### Backend
-- CRUD órdenes preventivas/correctivas con estados
-- Checklist templates, firma del técnico, fecha de cierre
-- Posponer y cierre parcial de órdenes
-- Archivos en máquinas sin límites
-- Endpoint `/api/my-orders`
-- Análisis de correctivos recurrentes
-- **Endpoints `/api/machine-stops`**: Registro de paradas por tipo
-- **Endpoints `/api/machine-starts`**: Registro de arranques
-- **Endpoint `/api/machine-starts/compliance-stats`**: Estadísticas de cumplimiento
-
-### Frontend
-- Órdenes: Checklist, firma, posponer, cierre parcial
-- Máquinas: Vista con archivos adjuntos
-- Mis Órdenes: Vista organizada por tipo/estado
-- Analytics: Correctivos recurrentes por máquina
-- **MachineStops.jsx**: Paradas con tipos (avería/producción/calidad), motivo, duración
-- **MachineStarts.jsx**: Arranques con hora objetivo/real, razón de retraso
-  - Tab "Registros": Tabla con estado (a tiempo/retrasado/pendiente)
-  - Tab "Gráficas": Pie de distribución, barras por sección, línea temporal, barras por máquina
-  - % Cumplimiento calculado automáticamente
-
-## User Personas
-- **Admin**: Control total
-- **Supervisor**: Gestiona órdenes y departamentos
-- **Técnico**: Mis Órdenes, completar checklist, posponer/cerrar parcial
-
-## Backlog (P1)
-- Exportar reportes a PDF
-- Notificaciones por email
-- Gestión de plantillas de checklist desde UI
-
-## Próximos Pasos
-- Alertas automáticas para averías recurrentes
-- Análisis predictivo de fallos
-- Dashboard de tiempo real para paradas activas
+## Próximos Pasos Sugeridos
+- P0: Ninguno
+- P1: Agregar reportes exportables de cumplimiento por línea
+- P2: Notificaciones cuando hay retrasos consecutivos
