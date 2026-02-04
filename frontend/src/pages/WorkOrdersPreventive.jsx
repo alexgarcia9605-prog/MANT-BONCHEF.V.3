@@ -67,7 +67,9 @@ export default function WorkOrdersPreventive() {
         pendiente: 'bg-gray-500/15 text-gray-700',
         en_progreso: 'bg-blue-500/15 text-blue-700',
         completada: 'bg-green-500/15 text-green-700',
-        cancelada: 'bg-red-500/15 text-red-700'
+        cancelada: 'bg-red-500/15 text-red-700',
+        cerrada_parcial: 'bg-purple-500/15 text-purple-700',
+        pospuesta: 'bg-amber-500/15 text-amber-700'
     };
 
     if (loading) {
