@@ -22,6 +22,7 @@ import Users from "./pages/Users";
 import MyOrders from "./pages/MyOrders";
 import MachineStops from "./pages/MachineStops";
 import MachineStarts from "./pages/MachineStarts";
+import Warehouse from "./pages/Warehouse";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
