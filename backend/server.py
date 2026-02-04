@@ -431,6 +431,22 @@ async def update_user_role(user_id: str, role: str, user: dict = Depends(require
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return {"message": "Rol actualizado"}
 
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str, user: dict = Depends(require_role(["admin"]))):
+    """Eliminar un usuario - Solo admin puede eliminar"""
+    if user_id == user["id"]:
+        raise HTTPException(status_code=400, detail="No puedes eliminarte a ti mismo")
+    
+    # Check if user has assigned work orders
+    orders = await db.work_orders.find_one({"assigned_to": user_id, "status": {"$ne": "completada"}})
+    if orders:
+        raise HTTPException(status_code=400, detail="No se puede eliminar: tiene órdenes de trabajo asignadas pendientes")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return {"message": "Usuario eliminado"}
+
 # ============== DEPARTMENTS ENDPOINTS ==============
 
 @api_router.post("/departments", response_model=DepartmentResponse)
