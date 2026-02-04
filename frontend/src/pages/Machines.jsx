@@ -12,7 +12,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
-import { cn, getMachineStatusLabel, formatFileSize, formatDateTime } from '../lib/utils';
+import { cn, getMachineStatusLabel, formatFileSize, formatDateTime, formatDate, getStatusLabel, getPriorityLabel } from '../lib/utils';
 import {
     Plus,
     Search,
@@ -27,7 +27,12 @@ import {
     Download,
     X,
     Paperclip,
-    File
+    File,
+    Calendar,
+    Wrench,
+    Clock,
+    CheckCircle2,
+    AlertCircle
 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
