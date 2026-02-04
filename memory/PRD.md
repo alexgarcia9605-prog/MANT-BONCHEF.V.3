@@ -1,41 +1,35 @@
 # Bonchef Mantenimiento - PRD
 
+## Diseño "Performance Pro" - Industrial Elegance
+
+### Paleta de Colores
+- Primary: #FF5500 (Orange 600)
+- Background: Slate 900-800 (dark), Slate 100 (light)
+- Accent: Orange gradients
+
+### Tipografía
+- Títulos: Barlow Condensed (industrial, bold)
+- Cuerpo: Manrope (moderno, legible)
+- Código: JetBrains Mono
+
+### Componentes
+- Sidebar: Dark theme con gradient, links con border-left naranja
+- Cards: Bordes sutiles con hover glow naranja
+- Tablas: Headers uppercase, filas con hover suave
+- Login: Glassmorphism con gradiente oscuro
+
 ## Roles del Sistema
+- **Admin**: Acceso total + crear usuarios
+- **Supervisor**: Operaciones + gestión parcial
+- **Técnico**: Órdenes asignadas
+- **Encargado de Línea**: Solo correctivos
 
-### 1. Administrador (admin)
-- Acceso total a todas las funciones
-- Puede **crear nuevos usuarios** con email, contraseña y rol
-- Gestión de usuarios y roles
-- Crear/editar/eliminar todo
-
-### 2. Supervisor (supervisor)
-- Acceso a todas las operaciones
-- No puede gestionar usuarios admin
-
-### 3. Técnico (tecnico)
-- Acceso a órdenes asignadas
-- Dashboard, máquinas, departamentos
-
-### 4. Encargado de Línea (encargado_linea)
-- Solo acceso a Órdenes Correctivas
-- Puede crear nuevas órdenes correctivas
-
-## Funcionalidades Implementadas
-
-### Gestión de Usuarios (Admin)
-- Botón "Nuevo Usuario" en página Usuarios
-- Formulario con: Nombre, Email, Contraseña, Rol
-- Endpoint POST /api/auth/register-admin (solo admin)
-
-### Órdenes de Trabajo
-- Flujo "Realizar" con cierre parcial y campo de razón
-- Filtros "Pendientes" incluyen cierre parcial
-- Preventivos asociados visibles en cada máquina
-
-### Sistema
-- Archivos sin límite en máquinas y órdenes
-- Eliminación de entidades habilitada
-- Hora objetivo predefinida en líneas de producción
+## Funcionalidades
+- Gestión de usuarios (admin crea usuarios)
+- Flujo "Realizar" con cierre parcial
+- Preventivos asociados en máquinas
+- Archivos sin límite
+- Hora objetivo predefinida en líneas
 
 ## Arquitectura
 - Frontend: React + TailwindCSS
