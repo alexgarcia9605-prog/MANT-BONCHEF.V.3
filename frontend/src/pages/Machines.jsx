@@ -634,6 +634,71 @@ export default function Machines() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Preventivos Asociados */}
+                            <div className="border-t pt-4">
+                                <h4 className="font-semibold flex items-center gap-2 mb-4">
+                                    <Calendar className="w-4 h-4 text-blue-500" />
+                                    Órdenes Preventivas Asociadas
+                                    <Badge variant="secondary" className="ml-auto">
+                                        {machinePreventivos.length}
+                                    </Badge>
+                                </h4>
+                                
+                                {loadingPreventivos ? (
+                                    <div className="flex items-center justify-center py-8">
+                                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                                    </div>
+                                ) : machinePreventivos.length === 0 ? (
+                                    <div className="text-center py-8 bg-muted/30 rounded-lg">
+                                        <Calendar className="w-10 h-10 mx-auto text-muted-foreground/30 mb-2" />
+                                        <p className="text-sm text-muted-foreground">No hay preventivos asociados</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                                        {machinePreventivos.map((orden) => {
+                                            const statusColors = {
+                                                pendiente: 'bg-yellow-500/15 text-yellow-700',
+                                                en_progreso: 'bg-blue-500/15 text-blue-700',
+                                                completada: 'bg-green-500/15 text-green-700',
+                                                cerrada_parcial: 'bg-purple-500/15 text-purple-700',
+                                                cancelada: 'bg-red-500/15 text-red-700'
+                                            };
+                                            const priorityColors = {
+                                                critica: 'priority-critica',
+                                                alta: 'priority-alta',
+                                                media: 'priority-media',
+                                                baja: 'priority-baja'
+                                            };
+                                            return (
+                                                <div
+                                                    key={orden.id}
+                                                    className="p-3 bg-muted/50 rounded-lg hover:bg-muted/80 cursor-pointer transition-colors"
+                                                    onClick={() => navigate(`/work-orders/${orden.id}`)}
+                                                >
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-medium truncate">{orden.title}</p>
+                                                            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                                                                <Clock className="w-3 h-3" />
+                                                                <span>{formatDate(orden.scheduled_date)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex flex-col items-end gap-1">
+                                                            <Badge className={statusColors[orden.status] || 'bg-gray-500/15'}>
+                                                                {orden.status === 'cerrada_parcial' ? 'Cierre Parcial' : getStatusLabel(orden.status)}
+                                                            </Badge>
+                                                            <Badge className={priorityColors[orden.priority]}>
+                                                                {getPriorityLabel(orden.priority)}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </DialogContent>
