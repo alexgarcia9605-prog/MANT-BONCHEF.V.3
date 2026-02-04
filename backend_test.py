@@ -1440,9 +1440,9 @@ class BonchefAPITester:
             return False
 
 def main():
-    """Main test execution"""
+    """Main test execution for production line functionality"""
     tester = BonchefAPITester()
-    success = tester.run_all_tests()
+    success = tester.run_production_line_tests()
     return 0 if success else 1
 
 if __name__ == "__main__":
