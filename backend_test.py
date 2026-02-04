@@ -188,7 +188,56 @@ class BonchefAPITester:
             self.log("Get department by ID failed", False)
             return False
 
-    # ============== MACHINES TESTS ==============
+    # ============== PRODUCTION LINES TESTS ==============
+    def test_create_production_line(self, dept_id):
+        """Test production line creation"""
+        if not dept_id:
+            self.log("No department ID available for production line creation", False)
+            return None
+            
+        self.log("Testing production line creation...")
+        line_data = {
+            "name": f"Línea Test {datetime.now().strftime('%H%M%S')}",
+            "code": f"LT-{datetime.now().strftime('%H%M%S')}",
+            "department_id": dept_id,
+            "description": "Línea de producción para testing",
+            "target_start_time": "06:00"
+        }
+        
+        success, response = self.make_request('POST', 'production-lines', line_data, expected_status=200)
+        if success and 'id' in response:
+            self.log(f"Production line created - ID: {response['id']}", True)
+            self.created_resources['production_lines'] = getattr(self.created_resources, 'production_lines', [])
+            self.created_resources['production_lines'].append(response['id'])
+            return response['id']
+        else:
+            self.log("Production line creation failed", False)
+            return None
+
+    def test_get_production_lines(self):
+        """Test getting all production lines"""
+        self.log("Testing get production lines...")
+        success, data = self.make_request('GET', 'production-lines')
+        if success and isinstance(data, list):
+            self.log(f"Retrieved {len(data)} production lines", True)
+            return True
+        else:
+            self.log("Get production lines failed", False)
+            return False
+
+    def test_get_production_lines_by_department(self, dept_id):
+        """Test filtering production lines by department"""
+        if not dept_id:
+            return False
+            
+        self.log(f"Testing get production lines by department: {dept_id}")
+        success, data = self.make_request('GET', f'production-lines?department_id={dept_id}')
+        if success and isinstance(data, list):
+            self.log(f"Retrieved {len(data)} production lines for department", True)
+            return True
+        else:
+            self.log("Get production lines by department failed", False)
+            return False
     def test_create_machine(self, dept_id):
         """Test machine creation"""
         if not dept_id:
