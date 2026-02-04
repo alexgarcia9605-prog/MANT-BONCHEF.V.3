@@ -26,6 +26,7 @@ const navItems = [
     { to: '/my-orders', icon: FolderOpen, label: 'Mis Órdenes', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/work-orders/preventive', icon: CalendarClock, label: 'Órdenes Preventivas', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/work-orders/corrective', icon: AlertTriangle, label: 'Órdenes Correctivas' },
+    { to: '/warehouse', icon: Package, label: 'Almacén', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/machine-stops', icon: OctagonX, label: 'Paradas', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/machine-starts', icon: Play, label: 'Arranques', roles: ['admin', 'supervisor', 'tecnico'] },
     { to: '/machines', icon: Cog, label: 'Máquinas', roles: ['admin', 'supervisor', 'tecnico'] },
