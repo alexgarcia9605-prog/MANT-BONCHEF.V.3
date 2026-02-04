@@ -62,7 +62,8 @@ export default function Users() {
     const roleClass = {
         admin: 'bg-purple-500/15 text-purple-700 border-purple-500/30',
         supervisor: 'bg-blue-500/15 text-blue-700 border-blue-500/30',
-        tecnico: 'bg-green-500/15 text-green-700 border-green-500/30'
+        tecnico: 'bg-green-500/15 text-green-700 border-green-500/30',
+        encargado_linea: 'bg-orange-500/15 text-orange-700 border-orange-500/30'
     };
 
     if (loading) {
