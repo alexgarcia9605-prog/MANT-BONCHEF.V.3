@@ -110,6 +110,7 @@ function App() {
                         <Route path="/work-orders/corrective" element={<WorkOrdersCorrective />} />
                         <Route path="/work-orders/corrective/new" element={<NewWorkOrderCorrective />} />
                         <Route path="/work-orders/:id" element={<WorkOrderDetail />} />
+                        <Route path="/warehouse" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Warehouse /></RoleRoute>} />
                         <Route path="/machines" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><Machines /></RoleRoute>} />
                         <Route path="/machine-stops" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><MachineStops /></RoleRoute>} />
                         <Route path="/machine-starts" element={<RoleRoute allowedRoles={['admin', 'supervisor', 'tecnico']}><MachineStarts /></RoleRoute>} />
