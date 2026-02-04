@@ -1,35 +1,41 @@
 # Bonchef Mantenimiento - PRD
 
-## Diseño "Performance Pro" - Industrial Elegance
+## Módulo Almacén de Repuestos (NUEVO)
 
-### Paleta de Colores
-- Primary: #FF5500 (Orange 600)
-- Background: Slate 900-800 (dark), Slate 100 (light)
-- Accent: Orange gradients
+### Características
+- **Inventario de repuestos** con referencia interna y externa
+- **Stock con límites**: mínimo (rojo) y máximo (verde)
+- **Ubicación física** en el almacén
+- **Máquina asociada** a cada repuesto
+- **Solicitudes de técnicos** que admin/supervisor aprueban
+- **Descuento automático** de stock al entregar
 
-### Tipografía
-- Títulos: Barlow Condensed (industrial, bold)
-- Cuerpo: Manrope (moderno, legible)
-- Código: JetBrains Mono
+### Campos de Repuesto
+- Nombre, Descripción
+- Referencia interna (única)
+- Referencia proveedor
+- Stock actual, mínimo, máximo
+- Ubicación en almacén
+- Máquina asociada
+- Unidad (unidad, kg, litros, etc.)
+- Proveedor, Precio
 
-### Componentes
-- Sidebar: Dark theme con gradient, links con border-left naranja
-- Cards: Bordes sutiles con hover glow naranja
-- Tablas: Headers uppercase, filas con hover suave
-- Login: Glassmorphism con gradiente oscuro
+### Permisos
+- **Admin**: CRUD completo de repuestos
+- **Supervisor**: Aprobar/rechazar solicitudes
+- **Técnico**: Ver inventario, solicitar repuestos
 
 ## Roles del Sistema
-- **Admin**: Acceso total + crear usuarios
-- **Supervisor**: Operaciones + gestión parcial
-- **Técnico**: Órdenes asignadas
-- **Encargado de Línea**: Solo correctivos
+- Admin: Acceso total
+- Supervisor: Operaciones + aprobar solicitudes
+- Técnico: Órdenes + solicitar repuestos
+- Encargado de Línea: Solo correctivos
 
-## Funcionalidades
-- Gestión de usuarios (admin crea usuarios)
-- Flujo "Realizar" con cierre parcial
-- Preventivos asociados en máquinas
-- Archivos sin límite
-- Hora objetivo predefinida en líneas
+## Diseño "Performance Pro"
+- Sidebar oscuro con accent naranja
+- Tipografía Barlow Condensed / Manrope
+- Cards con hover glow
+- Login con glassmorphism
 
 ## Arquitectura
 - Frontend: React + TailwindCSS
