@@ -264,7 +264,7 @@ export default function WorkOrderDetail() {
                 )}
             </PageHeader>
 
-            {/* Action Buttons: Postpone and Partial Close */}
+            {/* Action Button: Postpone only */}
             {canPostponeOrPartialClose && order.status !== 'completada' && order.status !== 'cancelada' && (
                 <div className="flex flex-wrap gap-3">
                     {/* Postpone Dialog */}
@@ -304,43 +304,6 @@ export default function WorkOrderDetail() {
                                 </div>
                                 <Button onClick={handlePostpone} className="w-full bg-amber-500 hover:bg-amber-600" data-testid="confirm-postpone">
                                     Confirmar Aplazamiento
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-
-                    {/* Partial Close Dialog */}
-                    <Dialog open={partialCloseDialogOpen} onOpenChange={setPartialCloseDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50" data-testid="partial-close-btn">
-                                <AlertOctagon className="w-4 h-4 mr-2" />
-                                Cierre Parcial
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle className="flex items-center gap-2">
-                                    <AlertOctagon className="w-5 h-5 text-purple-500" />
-                                    Cierre Parcial de Orden
-                                </DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4 mt-4">
-                                <p className="text-sm text-muted-foreground">
-                                    El cierre parcial indica que la orden se ha trabajado pero no se ha completado totalmente.
-                                    Se requiere seguimiento posterior.
-                                </p>
-                                <div className="form-group">
-                                    <Label>Notas del Cierre Parcial *</Label>
-                                    <Textarea
-                                        value={partialCloseData.notes}
-                                        onChange={(e) => setPartialCloseData({ ...partialCloseData, notes: e.target.value })}
-                                        placeholder="Describe qué se ha realizado y qué queda pendiente..."
-                                        rows={4}
-                                        data-testid="partial-close-notes"
-                                    />
-                                </div>
-                                <Button onClick={handlePartialClose} className="w-full bg-purple-500 hover:bg-purple-600" data-testid="confirm-partial-close">
-                                    Confirmar Cierre Parcial
                                 </Button>
                             </div>
                         </DialogContent>
