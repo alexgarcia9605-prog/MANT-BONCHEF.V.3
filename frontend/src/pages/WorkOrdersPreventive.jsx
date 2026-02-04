@@ -116,6 +116,7 @@ export default function WorkOrdersPreventive() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todos los estados</SelectItem>
+                                <SelectItem value="pendientes">📋 Pendientes (incluye cierre parcial)</SelectItem>
                                 <SelectItem value="pendiente">Pendiente</SelectItem>
                                 <SelectItem value="en_progreso">En Progreso</SelectItem>
                                 <SelectItem value="cerrada_parcial">Cierre Parcial</SelectItem>
