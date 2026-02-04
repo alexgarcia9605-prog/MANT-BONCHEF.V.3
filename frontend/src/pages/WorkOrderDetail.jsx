@@ -387,26 +387,24 @@ export default function WorkOrderDetail() {
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>Información General</CardTitle>
                             <div className="flex gap-2">
-                                {/* Botón REALIZAR para técnicos asignados */}
-                                {isAssignedTechnician && order.status !== 'completada' && order.status !== 'cancelada' && (
-                                    <Dialog open={editing && !hasRole(['admin', 'supervisor'])} onOpenChange={(open) => {
-                                        if (!hasRole(['admin', 'supervisor'])) setEditing(open);
-                                    }}>
+                                {/* Botón REALIZAR - para técnicos asignados o admin */}
+                                {(isAssignedTechnician || hasRole(['admin', 'supervisor'])) && order.status !== 'completada' && order.status !== 'cancelada' && (
+                                    <Dialog open={realizarDialogOpen} onOpenChange={setRealizarDialogOpen}>
                                         <DialogTrigger asChild>
                                             <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700" data-testid="realizar-order-btn">
                                                 <CheckSquare className="w-4 h-4 mr-2" />
                                                 Realizar
                                             </Button>
                                         </DialogTrigger>
-                                        <DialogContent className="max-h-[90vh] overflow-y-auto">
+                                        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                                             <DialogHeader>
                                                 <DialogTitle className="flex items-center gap-2">
                                                     <CheckSquare className="w-5 h-5 text-green-600" />
-                                                    Realizar Orden
+                                                    Realizar Orden {order?.type === 'preventivo' ? 'Preventiva' : 'Correctiva'}
                                                 </DialogTitle>
                                             </DialogHeader>
                                             <div className="space-y-4 mt-4">
-                                                {/* Campos para preventivos */}
+                                                {/* Campos para PREVENTIVOS */}
                                                 {order?.type === 'preventivo' && (
                                                     <>
                                                         <div className="form-group">
@@ -422,23 +420,29 @@ export default function WorkOrderDetail() {
                                                         {editData.checklist && editData.checklist.length > 0 && (
                                                             <div className="form-group">
                                                                 <Label>Checklist de Verificación</Label>
-                                                                <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
+                                                                <div className="space-y-2 mt-2 max-h-48 overflow-y-auto border rounded p-2">
                                                                     {editData.checklist.map((item, idx) => (
                                                                         <div 
                                                                             key={item.id || idx}
-                                                                            className="flex items-center gap-2 p-2 bg-muted rounded"
+                                                                            className="flex items-center gap-2 p-2 bg-muted rounded cursor-pointer hover:bg-muted/80"
+                                                                            onClick={() => {
+                                                                                const newChecklist = [...editData.checklist];
+                                                                                newChecklist[idx] = { ...item, checked: !item.checked };
+                                                                                setEditData({ ...editData, checklist: newChecklist });
+                                                                            }}
                                                                         >
                                                                             <input
                                                                                 type="checkbox"
-                                                                                checked={item.checked}
+                                                                                checked={item.checked || false}
                                                                                 onChange={(e) => {
+                                                                                    e.stopPropagation();
                                                                                     const newChecklist = [...editData.checklist];
                                                                                     newChecklist[idx] = { ...item, checked: e.target.checked };
                                                                                     setEditData({ ...editData, checklist: newChecklist });
                                                                                 }}
                                                                                 className="h-4 w-4"
                                                                             />
-                                                                            <span className={`text-sm ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
+                                                                            <span className={`text-sm flex-1 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
                                                                                 {item.name}
                                                                                 {item.is_required && <span className="text-red-500 ml-1">*</span>}
                                                                             </span>
@@ -450,7 +454,7 @@ export default function WorkOrderDetail() {
                                                         <div className="form-group">
                                                             <Label>Firma del Técnico</Label>
                                                             <Input
-                                                                value={editData.technician_signature}
+                                                                value={editData.technician_signature || ''}
                                                                 onChange={(e) => setEditData({ ...editData, technician_signature: e.target.value })}
                                                                 placeholder="Tu nombre como firma"
                                                                 data-testid="realizar-signature"
@@ -458,13 +462,14 @@ export default function WorkOrderDetail() {
                                                         </div>
                                                     </>
                                                 )}
-                                                {/* Campos para correctivos */}
+                                                
+                                                {/* Campos para CORRECTIVOS */}
                                                 {order?.type === 'correctivo' && (
                                                     <>
                                                         <div className="form-group">
                                                             <Label>Notas del trabajo realizado</Label>
                                                             <Textarea
-                                                                value={editData.notes}
+                                                                value={editData.notes || ''}
                                                                 onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
                                                                 placeholder="Describe el trabajo realizado..."
                                                                 data-testid="realizar-notes"
@@ -494,7 +499,7 @@ export default function WorkOrderDetail() {
                                                             <div className="form-group">
                                                                 <Label>Repuesto Utilizado</Label>
                                                                 <Input
-                                                                    value={editData.spare_part_used}
+                                                                    value={editData.spare_part_used || ''}
                                                                     onChange={(e) => setEditData({ ...editData, spare_part_used: e.target.value })}
                                                                     placeholder="Nombre del repuesto"
                                                                 />
@@ -502,7 +507,7 @@ export default function WorkOrderDetail() {
                                                             <div className="form-group">
                                                                 <Label>Referencia</Label>
                                                                 <Input
-                                                                    value={editData.spare_part_reference}
+                                                                    value={editData.spare_part_reference || ''}
                                                                     onChange={(e) => setEditData({ ...editData, spare_part_reference: e.target.value })}
                                                                     placeholder="Referencia"
                                                                 />
@@ -511,14 +516,18 @@ export default function WorkOrderDetail() {
                                                     </>
                                                 )}
                                                 
-                                                {/* Botones de acción */}
+                                                {/* Botones de acción - REALIZADA o CIERRE PARCIAL */}
                                                 <div className="flex gap-3 pt-4 border-t">
                                                     <Button 
                                                         onClick={async () => {
-                                                            await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'completada' });
-                                                            toast.success('Orden marcada como realizada');
-                                                            setEditing(false);
-                                                            fetchOrder();
+                                                            try {
+                                                                await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'completada' });
+                                                                toast.success('Orden marcada como REALIZADA');
+                                                                setRealizarDialogOpen(false);
+                                                                fetchOrder();
+                                                            } catch (error) {
+                                                                toast.error('Error al marcar como realizada');
+                                                            }
                                                         }} 
                                                         className="flex-1 bg-green-600 hover:bg-green-700"
                                                         data-testid="btn-realizada"
@@ -528,10 +537,14 @@ export default function WorkOrderDetail() {
                                                     </Button>
                                                     <Button 
                                                         onClick={async () => {
-                                                            await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'cerrada_parcial' });
-                                                            toast.success('Orden cerrada parcialmente');
-                                                            setEditing(false);
-                                                            fetchOrder();
+                                                            try {
+                                                                await axios.put(`${API}/work-orders/${id}`, { ...editData, status: 'cerrada_parcial' });
+                                                                toast.success('Orden con CIERRE PARCIAL');
+                                                                setRealizarDialogOpen(false);
+                                                                fetchOrder();
+                                                            } catch (error) {
+                                                                toast.error('Error al cerrar parcialmente');
+                                                            }
                                                         }} 
                                                         variant="outline"
                                                         className="flex-1 border-purple-500 text-purple-600 hover:bg-purple-50"
@@ -548,16 +561,14 @@ export default function WorkOrderDetail() {
                                 
                                 {/* Botón EDITAR solo para admin/supervisor */}
                                 {hasRole(['admin', 'supervisor']) && (
-                                    <Dialog open={editing && hasRole(['admin', 'supervisor'])} onOpenChange={(open) => {
-                                        if (hasRole(['admin', 'supervisor'])) setEditing(open);
-                                    }}>
+                                    <Dialog open={editing} onOpenChange={setEditing}>
                                         <DialogTrigger asChild>
                                             <Button variant="outline" size="sm" data-testid="edit-order-btn">
                                                 <Edit className="w-4 h-4 mr-2" />
                                                 Editar
                                             </Button>
                                         </DialogTrigger>
-                                        <DialogContent className="max-h-[90vh] overflow-y-auto">
+                                        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                                             <DialogHeader>
                                                 <DialogTitle>Editar Orden</DialogTitle>
                                             </DialogHeader>
@@ -615,109 +626,6 @@ export default function WorkOrderDetail() {
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
-                                                {order?.type === 'correctivo' && (
-                                                    <>
-                                                        <div className="form-group">
-                                                            <Label>Notas</Label>
-                                                            <Textarea
-                                                                value={editData.notes}
-                                                                onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                                                                placeholder="Agregar notas..."
-                                                                data-testid="edit-notes"
-                                                            />
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <Label>Número de Parte</Label>
-                                                            <Input
-                                                                value={editData.part_number}
-                                                                onChange={(e) => setEditData({ ...editData, part_number: e.target.value })}
-                                                                placeholder="Ej: PN-12345-A"
-                                                            />
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <Label>Causa del Fallo</Label>
-                                                            <Select
-                                                                value={editData.failure_cause || "none"}
-                                                                onValueChange={(v) => setEditData({ ...editData, failure_cause: v === "none" ? "" : v })}
-                                                            >
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Selecciona la causa" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="none">Sin especificar</SelectItem>
-                                                                    <SelectItem value="accidente">Accidente</SelectItem>
-                                                                    <SelectItem value="mala_utilizacion">Mala utilización</SelectItem>
-                                                                    <SelectItem value="desgaste">Desgaste</SelectItem>
-                                                                    <SelectItem value="fatiga_acumulada">Fatiga acumulada</SelectItem>
-                                                                    <SelectItem value="otros">Otros</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                        <div className="grid grid-cols-2 gap-3">
-                                                            <div className="form-group">
-                                                                <Label>Repuesto Utilizado</Label>
-                                                                <Input
-                                                                    value={editData.spare_part_used}
-                                                                    onChange={(e) => setEditData({ ...editData, spare_part_used: e.target.value })}
-                                                                    placeholder="Nombre del repuesto"
-                                                                />
-                                                            </div>
-                                                            <div className="form-group">
-                                                                <Label>Referencia</Label>
-                                                                <Input
-                                                                    value={editData.spare_part_reference}
-                                                                    onChange={(e) => setEditData({ ...editData, spare_part_reference: e.target.value })}
-                                                                    placeholder="Referencia"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                )}
-                                                {order?.type === 'preventivo' && (
-                                                    <>
-                                                        <div className="form-group">
-                                                            <Label>Observaciones</Label>
-                                                            <Textarea
-                                                                value={editData.description || ''}
-                                                                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                                                                placeholder="Escribe observaciones..."
-                                                                rows={3}
-                                                            />
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <Label>Firma del Técnico</Label>
-                                                            <Input
-                                                                value={editData.technician_signature}
-                                                                onChange={(e) => setEditData({ ...editData, technician_signature: e.target.value })}
-                                                                placeholder="Nombre del técnico"
-                                                            />
-                                                        </div>
-                                                        {editData.checklist && editData.checklist.length > 0 && (
-                                                            <div className="form-group">
-                                                                <Label>Checklist</Label>
-                                                                <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
-                                                                    {editData.checklist.map((item, idx) => (
-                                                                        <div key={item.id || idx} className="flex items-center gap-2 p-2 bg-muted rounded">
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                checked={item.checked}
-                                                                                onChange={(e) => {
-                                                                                    const newChecklist = [...editData.checklist];
-                                                                                    newChecklist[idx] = { ...item, checked: e.target.checked };
-                                                                                    setEditData({ ...editData, checklist: newChecklist });
-                                                                                }}
-                                                                                className="h-4 w-4"
-                                                                            />
-                                                                            <span className={`text-sm ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
-                                                                                {item.name}
-                                                                            </span>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
                                                 <Button onClick={handleUpdate} className="w-full" data-testid="save-edit-btn">
                                                     Guardar cambios
                                                 </Button>
