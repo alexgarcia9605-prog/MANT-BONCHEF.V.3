@@ -42,7 +42,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str
-    role: str = "tecnico"  # admin, supervisor, tecnico
+    role: str = "tecnico"  # admin, supervisor, tecnico, encargado_linea
 
 class UserLogin(BaseModel):
     email: EmailStr
