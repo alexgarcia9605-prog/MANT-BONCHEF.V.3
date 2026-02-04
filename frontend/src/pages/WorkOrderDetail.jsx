@@ -78,9 +78,10 @@ export default function WorkOrderDetail() {
 
     const fetchOrder = useCallback(async () => {
         try {
-            const [orderRes, usersRes] = await Promise.all([
+            const [orderRes, usersRes, sparePartsRes] = await Promise.all([
                 axios.get(`${API}/work-orders/${id}`),
-                axios.get(`${API}/users`).catch(() => ({ data: [] }))
+                axios.get(`${API}/users`).catch(() => ({ data: [] })),
+                axios.get(`${API}/spare-parts`).catch(() => ({ data: [] }))
             ]);
             setOrder(orderRes.data);
             setChecklistData(orderRes.data.checklist || []);
@@ -94,10 +95,18 @@ export default function WorkOrderDetail() {
                 failure_cause: orderRes.data.failure_cause || '',
                 spare_part_used: orderRes.data.spare_part_used || '',
                 spare_part_reference: orderRes.data.spare_part_reference || '',
+                spare_part_id: orderRes.data.spare_part_id || '',
+                spare_part_quantity: orderRes.data.spare_part_quantity || 1,
                 checklist: orderRes.data.checklist || [],
                 technician_signature: orderRes.data.technician_signature || ''
             });
             setUsers(usersRes.data);
+            setSpareParts(sparePartsRes.data);
+            // Preselect if order has spare part
+            if (orderRes.data.spare_part_id) {
+                setSelectedSparePartId(orderRes.data.spare_part_id);
+                setSparePartQuantity(orderRes.data.spare_part_quantity || 1);
+            }
         } catch (error) {
             console.error('Error fetching order:', error);
             toast.error('Error al cargar la orden');
