@@ -72,6 +72,9 @@ export default function WorkOrderDetail() {
     const [users, setUsers] = useState([]);
     const [editData, setEditData] = useState({});
     const [checklistData, setChecklistData] = useState([]);
+    const [spareParts, setSpareParts] = useState([]);
+    const [selectedSparePartId, setSelectedSparePartId] = useState('');
+    const [sparePartQuantity, setSparePartQuantity] = useState(1);
 
     const fetchOrder = useCallback(async () => {
         try {
