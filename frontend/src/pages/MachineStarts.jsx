@@ -234,53 +234,72 @@ export default function MachineStarts() {
                             </div>
 
                             <div className="form-group">
-                                <Label>Máquina *</Label>
+                                <Label className="flex items-center gap-2">
+                                    <GitBranch className="w-4 h-4 text-green-500" />
+                                    Línea de Producción *
+                                </Label>
                                 <Select
-                                    value={form.machine_id}
-                                    onValueChange={handleMachineChange}
+                                    value={form.production_line_id}
+                                    onValueChange={handleLineChange}
                                 >
-                                    <SelectTrigger data-testid="start-machine">
-                                        <SelectValue placeholder="Selecciona la máquina" />
+                                    <SelectTrigger data-testid="start-line">
+                                        <SelectValue placeholder="Selecciona la línea" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {machines.map(m => (
-                                            <SelectItem key={m.id} value={m.id}>
-                                                {m.name} - {m.department_name}
-                                            </SelectItem>
+                                        {Object.entries(linesByDept).map(([deptId, deptData]) => (
+                                            deptData.lines.length > 0 && (
+                                                <div key={deptId}>
+                                                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">
+                                                        {deptData.name}
+                                                    </div>
+                                                    {deptData.lines.map(line => (
+                                                        <SelectItem key={line.id} value={line.id}>
+                                                            <div className="flex items-center gap-2">
+                                                                <span>{line.name}</span>
+                                                                {line.target_start_time && (
+                                                                    <span className="text-xs text-muted-foreground">
+                                                                        (Obj: {line.target_start_time})
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </div>
+                                            )
                                         ))}
                                     </SelectContent>
                                 </Select>
-                            </div>
-
-                            <div className="form-group">
-                                <Label>Sección/Departamento *</Label>
-                                <Select
-                                    value={form.department_id}
-                                    onValueChange={(v) => setForm({ ...form, department_id: v })}
-                                >
-                                    <SelectTrigger data-testid="start-dept">
-                                        <SelectValue placeholder="Selecciona la sección" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {departments.map(d => (
-                                            <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                {productionLines.length === 0 && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        No hay líneas de producción activas. Crea líneas en Departamentos primero.
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="form-group">
-                                    <Label>Hora Objetivo *</Label>
+                                    <Label className="flex items-center gap-1">
+                                        <Target className="w-3 h-3" />
+                                        Hora Objetivo *
+                                    </Label>
                                     <Input
                                         type="time"
                                         value={form.target_time}
                                         onChange={(e) => setForm({ ...form, target_time: e.target.value })}
                                         data-testid="start-target"
+                                        className={form.target_time ? 'border-green-300 bg-green-50/50' : ''}
                                     />
+                                    {form.production_line_id && form.target_time && (
+                                        <p className="text-xs text-green-600 mt-1">
+                                            Auto-llenado desde la línea
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="form-group">
-                                    <Label>Hora Real</Label>
+                                    <Label className="flex items-center gap-1">
+                                        <Clock className="w-3 h-3" />
+                                        Hora Real
+                                    </Label>
                                     <Input
                                         type="time"
                                         value={form.actual_time}
@@ -304,7 +323,7 @@ export default function MachineStarts() {
                                 </div>
                             )}
 
-                            <Button type="submit" className="w-full" disabled={saving}>
+                            <Button type="submit" className="w-full" disabled={saving || productionLines.length === 0}>
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingStart ? 'Actualizar' : 'Registrar Arranque')}
                             </Button>
                         </form>
