@@ -51,6 +51,23 @@ const ProtectedRoute = () => {
     );
 };
 
+// Role-based route protection
+const RoleRoute = ({ allowedRoles, children }) => {
+    const { user } = useAuth();
+    
+    // Si no hay roles definidos o el usuario tiene un rol permitido
+    if (!allowedRoles || allowedRoles.includes(user?.role)) {
+        return children;
+    }
+    
+    // Encargado de línea redirige a correctivos
+    if (user?.role === 'encargado_linea') {
+        return <Navigate to="/work-orders/corrective" replace />;
+    }
+    
+    return <Navigate to="/dashboard" replace />;
+};
+
 // Public Route wrapper (redirect to dashboard if logged in)
 const PublicRoute = ({ children }) => {
     const { user, loading } = useAuth();
