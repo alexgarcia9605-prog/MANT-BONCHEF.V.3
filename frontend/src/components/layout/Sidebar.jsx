@@ -54,21 +54,21 @@ export const Sidebar = () => {
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full">
-            {/* Logo */}
-            <div className="p-6 border-b border-white/10">
+            {/* Logo - Elegant Header */}
+            <div className="p-6 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center shadow-lg shadow-primary/20">
                         <Wrench className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="font-bold text-lg tracking-tight">Bonchef</h1>
-                        <p className="text-xs text-white/60">Mantenimiento</p>
+                        <h1 className="font-bold text-lg tracking-tight text-white">Bonchef</h1>
+                        <p className="text-[10px] uppercase tracking-widest text-white/40 font-medium">Mantenimiento</p>
                     </div>
                 </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1">
+            {/* Navigation - Clean Links */}
+            <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
                 {filteredItems.map((item) => (
                     <NavLink
                         key={item.to}
@@ -83,31 +83,31 @@ export const Sidebar = () => {
                         data-testid={`nav-${item.to.replace('/', '')}`}
                     >
                         <item.icon className="w-5 h-5" />
-                        <span>{item.label}</span>
+                        <span className="text-sm">{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
 
-            {/* User info & logout */}
-            <div className="p-4 border-t border-white/10">
-                <div className="flex items-center gap-3 mb-4 px-4">
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                        <span className="text-sm font-semibold">
+            {/* User info & logout - Elegant Footer */}
+            <div className="p-4 border-t border-white/5 bg-black/20">
+                <div className="flex items-center gap-3 mb-3 px-2">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-orange-600/30 flex items-center justify-center ring-2 ring-primary/20">
+                        <span className="text-sm font-bold text-primary">
                             {user?.name?.charAt(0).toUpperCase()}
                         </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{user?.name}</p>
-                        <p className="text-xs text-white/60 capitalize">{user?.role}</p>
+                        <p className="text-sm font-medium truncate text-white">{user?.name}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-white/40">{user?.role?.replace('_', ' ')}</p>
                     </div>
                 </div>
                 <Button
                     variant="ghost"
-                    className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+                    className="w-full justify-start text-white/60 hover:text-white hover:bg-white/5 rounded-md h-10"
                     onClick={handleLogout}
                     data-testid="logout-btn"
                 >
-                    <LogOut className="w-5 h-5 mr-3" />
+                    <LogOut className="w-4 h-4 mr-3" />
                     Cerrar Sesión
                 </Button>
             </div>
