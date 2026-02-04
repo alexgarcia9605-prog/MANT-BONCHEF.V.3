@@ -45,7 +45,12 @@ export const Sidebar = () => {
         navigate('/login');
     };
 
-    const filteredItems = navItems.filter(item => !item.roles || hasRole(item.roles));
+    const filteredItems = navItems.filter(item => {
+        // Si no tiene roles definidos, todos pueden ver
+        if (!item.roles) return true;
+        // Si tiene roles, verificar si el usuario tiene alguno de esos roles
+        return hasRole(item.roles);
+    });
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full">
