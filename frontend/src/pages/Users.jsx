@@ -135,11 +135,12 @@ export default function Users() {
                                                                     value={u.role}
                                                                     onValueChange={(v) => handleRoleChange(u.id, v)}
                                                                 >
-                                                                    <SelectTrigger className="w-36" data-testid={`role-select-${u.id}`}>
+                                                                    <SelectTrigger className="w-40" data-testid={`role-select-${u.id}`}>
                                                                         <SelectValue />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
                                                                         <SelectItem value="tecnico">Técnico</SelectItem>
+                                                                        <SelectItem value="encargado_linea">Encargado Línea</SelectItem>
                                                                         <SelectItem value="supervisor">Supervisor</SelectItem>
                                                                         <SelectItem value="admin">Administrador</SelectItem>
                                                                     </SelectContent>
