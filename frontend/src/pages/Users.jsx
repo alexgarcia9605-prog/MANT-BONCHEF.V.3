@@ -127,21 +127,34 @@ export default function Users() {
                                             </td>
                                             {hasRole(['admin']) && (
                                                 <td>
-                                                    {u.id !== currentUser?.id && (
-                                                        <Select
-                                                            value={u.role}
-                                                            onValueChange={(v) => handleRoleChange(u.id, v)}
-                                                        >
-                                                            <SelectTrigger className="w-36" data-testid={`role-select-${u.id}`}>
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="tecnico">Técnico</SelectItem>
-                                                                <SelectItem value="supervisor">Supervisor</SelectItem>
-                                                                <SelectItem value="admin">Administrador</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    )}
+                                                    <div className="flex items-center gap-2">
+                                                        {u.id !== currentUser?.id && (
+                                                            <>
+                                                                <Select
+                                                                    value={u.role}
+                                                                    onValueChange={(v) => handleRoleChange(u.id, v)}
+                                                                >
+                                                                    <SelectTrigger className="w-36" data-testid={`role-select-${u.id}`}>
+                                                                        <SelectValue />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="tecnico">Técnico</SelectItem>
+                                                                        <SelectItem value="supervisor">Supervisor</SelectItem>
+                                                                        <SelectItem value="admin">Administrador</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    onClick={() => handleDelete(u.id)}
+                                                                    className="text-destructive hover:text-destructive"
+                                                                    data-testid={`delete-user-${u.id}`}
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             )}
                                         </tr>
