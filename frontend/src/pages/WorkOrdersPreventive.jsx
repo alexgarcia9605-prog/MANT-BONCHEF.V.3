@@ -51,7 +51,11 @@ export default function WorkOrdersPreventive() {
     const filteredOrders = orders.filter(order => {
         const matchesSearch = order.title.toLowerCase().includes(search.toLowerCase()) ||
             order.machine_name?.toLowerCase().includes(search.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        // "pendientes" incluye pendiente, en_progreso y cerrada_parcial
+        let matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+        if (statusFilter === 'pendientes') {
+            matchesStatus = ['pendiente', 'en_progreso', 'cerrada_parcial'].includes(order.status);
+        }
         const matchesDept = departmentFilter === 'all' || order.department_name === departmentFilter;
         return matchesSearch && matchesStatus && matchesDept;
     });
